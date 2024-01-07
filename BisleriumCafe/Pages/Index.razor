@@ -1,8 +1,19 @@
 ﻿@page "/"
+@layout EmptyLayout
 
-<h1>Hello, world!</h1>
+@inject Microsoft.AspNetCore.Components.NavigationManager _navigationManager
+@inject BisleriumCafe.Data.Services.SessionService _sessionService
+@inject BisleriumCafe.Data.Services.AuthService _authService
+@inject BisleriumCafe.Data.Repositories.Repository<User> _userRepository;
+@inject BisleriumCafe.Data.Repositories.Repository<Spare> _spareRepository;
+@inject BisleriumCafe.Data.Repositories.Repository<ActivityLog> _activityLogRepository;
 
-Welcome to your new app.
+@inject ISnackbar Snackbar;
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="d-flex justify-center align-center" style="height: 100vh">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudIcon Icon="@Icons.Material.Filled.BikeScooter" Color="Color.Primary" Style="font-size:120" />
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+    </MudStack>
+</div>
 
