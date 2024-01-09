@@ -46,7 +46,7 @@ namespace BisleriumCafe.Pages
                     // Get the product type of the cart item
                     var productType = cartItem.Product.ProductType;
 
-                    Snackbar.Add("Inside for");
+                    Snackbar.Add($"Inside for - Product Type: {productType}");
 
                     // Check if the product type is "coffee"
                     if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
@@ -57,16 +57,23 @@ namespace BisleriumCafe.Pages
                         if (FoundMember != null)
                         {
                             Snackbar.Add("Found");
+                            Snackbar.Add($"Current Purchase Count: {FoundMember.PurchasesCount}");
+
                             FoundMember.PurchasesCount += cartItem.Quantity;
 
-                            // Check if the purchase count is a multiple of 10
-                            if (FoundMember.PurchasesCount % 10 == 0)
-                            {
-                                // Redeem a free complimentary coffee
-                                Snackbar.Add($"Congratulations! You've earned a free complimentary coffee.", Severity.Success);
+                            // Calculate the number of complimentary drinks earned
+                            int complimentaryDrinks = FoundMember.PurchasesCount / 10;
 
-                                // Subtract 10 from the purchase count
-                                FoundMember.PurchasesCount -= 10;
+                            // Check if the member earned any complimentary drinks
+                            if (complimentaryDrinks > 0)
+                            {
+                                // Redeem complimentary drinks
+                                Snackbar.Add($"Congratulations! You've earned {complimentaryDrinks} free complimentary drink(s).", Severity.Success);
+
+                                // Subtract the corresponding purchase count for the earned drinks
+                                FoundMember.PurchasesCount -= complimentaryDrinks * 10;
+
+                                Snackbar.Add($"Updated Purchase Count: {FoundMember.PurchasesCount}");
                             }
 
                             // Update the member in the repository
@@ -85,6 +92,8 @@ namespace BisleriumCafe.Pages
                 Snackbar.Add("Cannot checkout with an empty cart.", Severity.Error);
             }
         }
+
+
 
 
 
