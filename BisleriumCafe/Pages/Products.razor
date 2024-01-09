@@ -118,13 +118,17 @@
             <MudTextField Lines="6" @bind-Value="@context.Description" Required />
         </MudTd>
         <MudTd DataLabel="Product Type">
-            <MudSelect @bind-Value="@context.ProductType" Label="Product Type" Required="true">
-                @foreach (var productType in Enum.GetValues(typeof(ProductType)))
+            <MudSelect @bind-Value="@context.ProductType" Label="Product Type">
+                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
                 {
                     <MudSelectItem Value="@productType">@Enum.GetName(typeof(ProductType), productType)</MudSelectItem>
                 }
             </MudSelect>
+
+
         </MudTd>
+
+
         <MudTd DataLabel="Price">
             <MudTextField @bind-Value="@context.Price" Required />
         </MudTd>
