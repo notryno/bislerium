@@ -1,0 +1,14 @@
+﻿@if (ProductName is null)
+{
+    <MudIcon Icon="@Icons.Material.Filled.QuestionMark" Title="Null" />
+}
+else
+{
+    <MudChip Color="Color.Info" Variant=@Variant.Outlined Text="@ProductName" />
+}
+
+
+@code {
+    [Parameter]
+    public string ProductName { get; set; }
+}

@@ -6,6 +6,7 @@ internal static class RepositoryInjection
     {
         return services.AddSingleton<Repository<User>, Repository<User>>()
             .AddSingleton<Repository<Spare>, Repository<Spare>>()
+            .AddSingleton<Repository<Product>, Repository <Product>>() //Ryan
             .AddSingleton<Repository<ActivityLog>, Repository<ActivityLog>>();
     }
 }

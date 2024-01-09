@@ -6,6 +6,8 @@ public class ActivityLog : IModel, ICloneable
 
     public Guid SpareID { get; set; }
 
+    public Guid ProductID { get; set; } //Ryan
+
     public int Quantity { get; set; }
 
     public StockAction Action { get; set; }
@@ -26,6 +28,7 @@ public class ActivityLog : IModel, ICloneable
         {
             Id = Id,
             SpareID = SpareID,
+            ProductID = ProductID, //Ryan
             Quantity = Quantity,
             Action = Action,
             ActedBy = ActedBy,

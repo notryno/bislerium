@@ -10,6 +10,8 @@ public partial class ApproveDialog
 
     [Parameter] public Spare Spare { get; set; }
 
+    //[Parameter] public Product Product { get; set; }
+
     private void Cancel()
     {
         MudDialog.Cancel();

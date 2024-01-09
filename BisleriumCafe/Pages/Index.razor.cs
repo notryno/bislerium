@@ -6,6 +6,7 @@ public partial class Index
     {
         await _userRepository.LoadAsync();
         await _spareRepository.LoadAsync();
+        await _productRepository.LoadAsync(); //Ryan
         await _activityLogRepository.LoadAsync();
         try
         {
@@ -13,6 +14,7 @@ public partial class Index
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Exception: {ex}");
             Snackbar.Add(ex.Message, Severity.Error);
         }
         await Task.Delay(1000);

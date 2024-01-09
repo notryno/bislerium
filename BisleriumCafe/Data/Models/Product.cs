@@ -1,6 +1,6 @@
 ﻿namespace BisleriumCafe.Data.Models;
 
-public class Spare : IModel, ICloneable
+public class Product : IModel, ICloneable
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -8,7 +8,7 @@ public class Spare : IModel, ICloneable
 
     public string Description { get; set; }
 
-    public string Company { get; set; }
+    public string ProductType { get; set; }
 
     public decimal Price { get; set; }
 
@@ -16,12 +16,12 @@ public class Spare : IModel, ICloneable
 
     public object Clone()
     {
-        return new Spare
+        return new Product
         {
             Id = Id,
             Name = Name,
             Description = Description,
-            Company = Company,
+            ProductType = ProductType,
             Price = Price,
             AvailableQuantity = AvailableQuantity
         };

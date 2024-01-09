@@ -51,4 +51,25 @@ public partial class ApproveButton
             await DialogService.ShowAsync<Dialogs.ApproveDialog>("Approval", parameters);
         }
     }
+
+    //private async Task ApproveProduct()
+    //{
+    //    var product = SpareRepository.Get(x => x.Id, ActivityLog.SpareID);
+    //    if (product == null)
+    //    {
+    //        Snackbar.Add("Product not found!", Severity.Error);
+    //        return;
+    //    }
+
+    //    if (ValidateWeekAndTime(Snackbar))
+    //    {
+    //        DialogParameters parameters = new()
+    //        {
+    //            { "Product", product },
+    //            { "ActivityLog", ActivityLog },
+    //            { "ChangeParentState", ChangeParentState }
+    //        };
+    //        await DialogService.ShowAsync<Dialogs.ApproveDialog>("Approval", parameters);
+    //    }
+    //}
 }

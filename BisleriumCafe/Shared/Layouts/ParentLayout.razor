@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@IsDarkMode" />
+
+@*Ryan*@
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@IsDarkMode" Theme="_currentTheme" />
 <MudDialogProvider MaxWidth="MaxWidth.ExtraSmall"
                    DisableBackdropClick="true"
                    Position="DialogPosition.Center"
@@ -12,6 +14,7 @@
         @Body
     </CascadingValue>
 </MudLayout>
+
 
 @code {
     private MudThemeProvider _mudThemeProvider;
@@ -31,4 +34,19 @@
     {
         IsDarkMode = !IsDarkMode;
     }
+
+    //Ryan
+    private readonly MudTheme _currentTheme = new()
+    {
+        Palette = new PaletteLight
+        {
+            Primary = "#0A7BCF",
+            Secondary = "#4CAF50",
+        },
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#6585e0",
+            Secondary = "#607D8B",
+        }
+    };
 }

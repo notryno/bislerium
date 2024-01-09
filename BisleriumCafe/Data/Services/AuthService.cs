@@ -60,20 +60,39 @@ internal class AuthService
         _userRepository.Add(user);
     }
 
-    public async Task<bool> Login(string userName, string password, bool stayLoggedIn)
+    //public async Task<bool> Login(string userName, string password, bool stayLoggedIn)
+    public async Task<bool> Login(string password, bool stayLoggedIn)
     {
-        CurrentUser = _userRepository.Get(x => x.UserName, userName);
-        if (CurrentUser == null)
+        //CurrentUser = _userRepository.Get(x => x.UserName, userName);
+        //if (CurrentUser == null)
+        //{
+        //    return false;
+        //}
+
+        //if (Hasher.VerifyHash(password, CurrentUser.PasswordHash))
+        //{
+        //    Session session = Session.Generate(CurrentUser.Id, stayLoggedIn);
+        //    await _sessionService.SaveSession(session);
+        //    return true;
+        //}
+        //return false;
+
+        //Ryan
+        var allUsers = _userRepository.GetAll();
+
+        foreach (var user in allUsers)
         {
-            return false;
+            if (Hasher.VerifyHash(password, user.PasswordHash))
+            {
+                // Password matches, set CurrentUser and create session
+                CurrentUser = user;
+                Session session = Session.Generate(CurrentUser.Id, stayLoggedIn);
+                await _sessionService.SaveSession(session);
+                return true;
+            }
         }
 
-        if (Hasher.VerifyHash(password, CurrentUser.PasswordHash))
-        {
-            Session session = Session.Generate(CurrentUser.Id, stayLoggedIn);
-            await _sessionService.SaveSession(session);
-            return true;
-        }
+        // No user with matching password found
         return false;
     }
 

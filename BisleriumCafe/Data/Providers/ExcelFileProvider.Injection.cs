@@ -6,6 +6,7 @@ internal static class ExcelFileProviderInjection
     {
         return services.AddSingleton<FileProvider<User>, ExcelFileProvider<User>>()
             .AddSingleton<FileProvider<Spare>, ExcelFileProvider<Spare>>()
+            .AddSingleton<FileProvider<Product>, ExcelFileProvider<Product>>() //Ryan
             .AddSingleton<FileProvider<ActivityLog>, ExcelFileProvider<ActivityLog>>();
     }
 }

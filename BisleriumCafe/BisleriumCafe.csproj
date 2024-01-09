@@ -101,5 +101,11 @@
       <RazorComponent Remove="Pages\RoleRoute.razor" />
       <RazorComponent Remove="Shared\Dialog\StockActionDialog.razor" />
       <RazorComponent Remove="Shared\Dialog\StockActionDialog.razor" />
+      <RazorComponent Remove="Shared\Dialogs\AddProductDialog.razor" />
+      <RazorComponent Remove="Shared\Dialogs\ApproveProductDialog.razor" />
+      <RazorComponent Remove="Shared\Dialogs\ApproveProductDialog.razor" />
+      <RazorComponent Remove="Shared\Dialogs\AddProductDialog.razor" />
+      <RazorComponent Remove="Shared\Chips\ProductChip.razor" />
+      <RazorComponent Remove="Shared\Dialogs\AddProductDialog.razor" />
     </ItemGroup>
 </Project>
