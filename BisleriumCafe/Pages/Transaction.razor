@@ -1,0 +1,61 @@
+﻿@page "/transaction"
+@layout MainLayout
+@inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository;
+@inject ISnackbar Snackbar
+
+@using MudBlazor
+
+<MudContainer>
+    <MudGrid>
+        <!-- Product Cards Column -->
+        <MudItem xs="12" md="8">
+            <MudGrid>
+                @foreach (var product in Products)
+                {
+                    <MudItem>
+                        <MudCard>
+                            <MudCardMedia>
+                                <!-- Display product image or any relevant content -->
+                                <img src="product.ImageUrl" alt="@product.Name" />
+                            </MudCardMedia>
+                            <MudCardContent>
+                                <MudText Typo="Typo.h4">@product.Name</MudText>
+                                <MudText Typo="Typo.body2">Price: Rs. @product.Price</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Outlined" OnClick="() => AddToCart(product)">Add to Cart</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudItem>
+
+        <!-- Shopping Cart Column -->
+        <MudItem xs="12" md="4">
+            <MudPaper>
+                <MudText Typo="Typo.h5">Shopping Cart</MudText>
+                <ul>
+                    @foreach (var cartItem in ShoppingCart)
+                    {
+                        <li>
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Secondary" OnClick="() => DecreaseQuantity(cartItem)">-</MudIconButton>
+                            @cartItem.Product.Name - Rs. @cartItem.Product.Price - Quantity: @cartItem.Quantity
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="() => IncreaseQuantity(cartItem)">+</MudIconButton>
+                        </li>
+                    }
+                </ul>
+                <MudText Typo="Typo.h6">Current Total: Rs. @CalculateTotal()</MudText>
+
+                <!-- Text input for member username or phone number -->
+                <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" />
+
+                <!-- Button for searching member -->
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember">Search Member</MudButton>
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout">Checkout</MudButton>
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+</MudContainer>

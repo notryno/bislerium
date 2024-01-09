@@ -7,6 +7,7 @@ internal static class JsonFileProvider
         return services.AddSingleton<FileProvider<User>, JsonFileProvider<User>>()
             .AddSingleton<FileProvider<Spare>, JsonFileProvider<Spare>>()
             .AddSingleton<FileProvider<Product>, JsonFileProvider<Product>>() //Ryan
+            .AddSingleton<FileProvider<Member>, JsonFileProvider<Member>>() //Ryan
             .AddSingleton<FileProvider<ActivityLog>, JsonFileProvider<ActivityLog>>();
     }
 }
