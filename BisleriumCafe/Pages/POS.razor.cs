@@ -1,9 +1,9 @@
 ﻿using System;
 namespace BisleriumCafe.Pages
 {
-	public partial class Transaction
+	public partial class POS
 	{
-        public const string Route = "/transaction";
+        public const string Route = "/pos";
         private string MemberInput { get; set; }
         private List<Product> Products;
         private List<CartItem> ShoppingCart = new List<CartItem>();
@@ -76,6 +76,19 @@ namespace BisleriumCafe.Pages
                                 Snackbar.Add($"Updated Purchase Count: {FoundMember.PurchasesCount}");
                             }
 
+                            // Create a Transaction object
+                            var transaction = new Transaction
+                            {
+                                MemberUsername = FoundMember.UserName,
+                                PurchaseDate = DateTime.Now,
+                                ProductName = cartItem.Product.Name,
+                                Quantity = cartItem.Quantity,
+                                Discount = 0, // Default discount for now, you can adjust this based on logic
+                            };
+
+                            // Add the transaction to the repository
+                            TransactionRepository.Add(transaction);
+
                             // Update the member in the repository
                             MemberRepository.Update(FoundMember);
                         }
@@ -92,6 +105,7 @@ namespace BisleriumCafe.Pages
                 Snackbar.Add("Cannot checkout with an empty cart.", Severity.Error);
             }
         }
+
 
 
 

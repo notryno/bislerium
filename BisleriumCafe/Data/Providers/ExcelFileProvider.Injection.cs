@@ -8,6 +8,7 @@ internal static class ExcelFileProviderInjection
             .AddSingleton<FileProvider<Spare>, ExcelFileProvider<Spare>>()
             .AddSingleton<FileProvider<Product>, ExcelFileProvider<Product>>() //Ryan
             .AddSingleton<FileProvider<Member>, ExcelFileProvider<Member>>() //Ryan
+            .AddSingleton<FileProvider<Transaction>, CsvFileProvider<Transaction>>() //Ryan
             .AddSingleton<FileProvider<ActivityLog>, ExcelFileProvider<ActivityLog>>();
     }
 }

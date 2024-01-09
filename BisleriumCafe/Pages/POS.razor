@@ -1,7 +1,8 @@
-﻿@page "/transaction"
+﻿@page "/pos"
 @layout MainLayout
 @inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository;
 @inject BisleriumCafe.Data.Repositories.Repository<Member> MemberRepository;
+@inject BisleriumCafe.Data.Repositories.Repository<Transaction> TransactionRepository;
 @inject ISnackbar Snackbar
 
 @using MudBlazor

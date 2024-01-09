@@ -8,6 +8,7 @@ internal static class RepositoryInjection
             .AddSingleton<Repository<Spare>, Repository<Spare>>()
             .AddSingleton<Repository<Product>, Repository <Product>>() //Ryan
             .AddSingleton<Repository<Member>, Repository<Member>>() //Ryan
+            .AddSingleton<Repository<Transaction>, Repository<Transaction>>() //Ryan
             .AddSingleton<Repository<ActivityLog>, Repository<ActivityLog>>();
     }
 }

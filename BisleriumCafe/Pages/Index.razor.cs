@@ -8,6 +8,7 @@ public partial class Index
         await _spareRepository.LoadAsync();
         await _productRepository.LoadAsync(); //Ryan
         await _memberRepository.LoadAsync(); //Ryan
+        await _transactionRepository.LoadAsync(); //Ryan
         await _activityLogRepository.LoadAsync();
         try
         {

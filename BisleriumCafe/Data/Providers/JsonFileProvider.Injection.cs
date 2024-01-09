@@ -8,6 +8,7 @@ internal static class JsonFileProvider
             .AddSingleton<FileProvider<Spare>, JsonFileProvider<Spare>>()
             .AddSingleton<FileProvider<Product>, JsonFileProvider<Product>>() //Ryan
             .AddSingleton<FileProvider<Member>, JsonFileProvider<Member>>() //Ryan
+            .AddSingleton<FileProvider<Transaction>, CsvFileProvider<Transaction>>() //Ryan
             .AddSingleton<FileProvider<ActivityLog>, JsonFileProvider<ActivityLog>>();
     }
 }

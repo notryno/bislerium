@@ -8,6 +8,7 @@ internal static class CSVFileProviderInjection
             .AddSingleton<FileProvider<Spare>, CsvFileProvider<Spare>>()
             .AddSingleton<FileProvider<Product>, CsvFileProvider<Product>>() //Ryan
             .AddSingleton<FileProvider<Member>, CsvFileProvider<Member>>() //Ryan
+            .AddSingleton<FileProvider<Transaction>, CsvFileProvider<Transaction>>() //Ryan
             .AddSingleton<FileProvider<ActivityLog>, CsvFileProvider<ActivityLog>>();
     }
 }

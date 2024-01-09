@@ -1,0 +1,90 @@
+﻿@page "/transactions"
+@layout MainLayout
+@*Ryan*@
+@inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository;
+@inject BisleriumCafe.Data.Repositories.Repository<Transaction> TransactionRepository;
+@inject BisleriumCafe.Data.Services.AuthService AuthService;
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudTable Elevation="0"
+          Items="@Elements"
+          FixedHeader="@Fixed_header"
+          FixedFooter="@Fixed_footer"
+          Height="@(Fixed_header || Fixed_footer ? "calc(100vh - 64px - 64px - 64px)" : "")"
+          Dense="@Dense"
+          Hover="@Hover"
+          ReadOnly="@ReadOnly"
+          CanCancelEdit="@CanCancelEdit"
+          Filter="new Func<Transaction, bool>(FilterFunc)"
+          @bind-SelectedItem="SelectedTransaction"
+          SortLabel="Sort By"
+          CommitEditTooltip="Commit Edit"
+          RowsPerPage="25"
+          OnCommitEditClick="@(() => Snackbar.Add("Transaction Updated!", Severity.Success))"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues"
+          IsEditRowSwitchingBlocked="@BlockSwitch"
+          ApplyButtonPosition="@ApplyButtonPosition"
+          EditButtonPosition="@EditButtonPosition"
+          EditTrigger="@EditTrigger">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Clearable="true"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col />
+        <col />
+        <col width="400" />
+        <col />
+        <col />
+        <col />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.Id)">ID</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.MemberUsername)">Member Username</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.PurchaseDate)">Purchase Date</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.ProductName)">Product Name</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.Quantity)">Quantity</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.Discount)">Discount</MudTableSortLabel></MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="ID">
+            <MudChip>@context.Id</MudChip>
+        </MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Member Username">@context.MemberUsername</MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Purchase Date">@context.PurchaseDate.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Product Name">@context.ProductName</MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Quantity">@context.Quantity</MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Discount">@context.Discount</MudTd>
+    </RowTemplate>
+
+
+    <RowEditingTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="Member Username">
+            <MudTextField @bind-Value="@context.MemberUsername" Required />
+        </MudTd>
+        <MudTd DataLabel="Purchase Date">
+            <MudDatePicker @bind-Date="@context.PurchaseDate" Format="yyyy-MM-dd HH:mm:ss" Required />
+        </MudTd>
+        <MudTd DataLabel="Product Name">
+            <MudTextField @bind-Value="@context.ProductName" Required />
+        </MudTd>
+        <MudTd DataLabel="Quantity">
+            <MudTextField @bind-Value="@context.Quantity" Required />
+        </MudTd>
+        <MudTd DataLabel="Discount">
+            <MudTextField @bind-Value="@context.Discount" Required />
+        </MudTd>
+    </RowEditingTemplate>
+
+
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 25, 50, 100, 200, 300,}" />
+    </PagerContent>
+</MudTable>
