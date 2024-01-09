@@ -26,30 +26,55 @@ public partial class Products
     protected sealed override void OnInitialized()
     {
 
-        SetAppBarTitle.Invoke("Manage Products");
-        Elements = ProductRepository.GetAll();
-        if (!AuthService.IsUserAdmin())
+        try
         {
-            ReadOnly = true;
+            SetAppBarTitle.Invoke("Manage Products");
+            Elements = ProductRepository.GetAll();
+            if (!AuthService.IsUserAdmin())
+            {
+                ReadOnly = true;
+            }
+            foreach (Product s in Elements)
+            {
+                ProductDescTracks.Add(s.Id, false);
+            }
+            
         }
-        foreach (Product s in Elements)
-        {
-            ProductDescTracks.Add(s.Id, false);
+        
+        catch (Exception ex)
+    {
+            Console.Error.WriteLine($"Error in OnInitialized: {ex.Message}");
+            // Log or handle the exception as needed.
         }
     }
 
     private void BackupItem(object element)
     {
-        ElementBeforeEdit = ((Product)element).Clone() as Product;
+        try
+        {
+            ElementBeforeEdit = ((Product)element).Clone() as Product;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error in BackupItem: {ex.Message}");
+            // Log or handle the exception as needed.
+        }
     }
 
     private void ResetItemToOriginalValues(object element)
     {
-        ((Product)element).Name = ElementBeforeEdit.Name;
-        ((Product)element).Description = ElementBeforeEdit.Description;
-        ((Product)element).ProductType = ElementBeforeEdit.ProductType; //Ryan
-        ((Product)element).Price = ElementBeforeEdit.Price;
-        ((Product)element).AvailableQuantity = ElementBeforeEdit.AvailableQuantity;
+        try
+        {
+            ((Product)element).Name = ElementBeforeEdit.Name;
+            ((Product)element).Description = ElementBeforeEdit.Description;
+            ((Product)element).ProductType = ElementBeforeEdit.ProductType; //Ryan
+            ((Product)element).Price = ElementBeforeEdit.Price;
+            ((Product)element).AvailableQuantity = ElementBeforeEdit.AvailableQuantity;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error in ResetItemToOriginalValues: {ex.Message}");
+        }
     }
 
     private bool FilterFunc(Product element)
@@ -58,7 +83,7 @@ public partial class Products
                || element.Id.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Name.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Description.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
-               || element.ProductType.Contains(SearchString, StringComparison.OrdinalIgnoreCase) //Ryan
+               || element.ProductType.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase) //Ryan
                || element.Price.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.AvailableQuantity.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
     }

@@ -8,7 +8,7 @@ public class Product : IModel, ICloneable
 
     public string Description { get; set; }
 
-    public string ProductType { get; set; }
+    public ProductType ProductType { get; set; }
 
     public decimal Price { get; set; }
 

@@ -7,7 +7,28 @@
         <MudForm @ref="form">
             <MudTextField T="string" @bind-Value="@Name" Label="Product Name" Required="true" RequiredError="Product name is required!" /> @*Ryan*@
             <MudTextField T="string" @bind-Value="@Description" Label="Description" Required="true" RequiredError="Description is required!" Lines="5" />
-            <MudTextField T="string" @bind-Value="@ProductType" Label="ProductType" Required="true" RequiredError="Product Type is required!" /> @*Ryan*@
+            <!--<MudSelect @bind-Value="@ProductType" Label="Product Type" Required="true" RequiredError="Product Type is required!">
+        @foreach (var productType in Enum.GetValues(typeof(ProductType)))
+        {
+            <MudSelectItem Value="@productType" Text="@productType.ToString()" />
+        }
+    </MudSelect>-->
+            @*Ryan*@
+
+            <!--<MudSelect @bind-Value="@ProductType" Label="State">
+        @foreach (ProductType item in Enum.GetValues(typeof(ProductType)))
+        {
+            <MudSelectItem Value="@item">@Enum.GetName(typeof(ProductType), item)</MudSelectItem>
+        }
+    </MudSelect>-->
+
+            <MudSelect @bind-Value="@ProductType" Label="State">
+                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                {
+                    <MudSelectItem Value="@productType">@Enum.GetName(typeof(ProductType), productType)</MudSelectItem>
+                }
+            </MudSelect>
+
             <MudTextField T="Decimal" @bind-Value="@Price" Label="Price" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="NPR" Validation="@(new RangeAttribute(1, 10000000) { ErrorMessage = "Price must be between 1 and 10000000"})" />
             <MudNumericField @bind-Value="@AvailableQuantity" Required="true" Label="Quantity" Variant="Variant.Text" Min="0" Max="100000" Validation="@(new RangeAttribute(1, 100000) { ErrorMessage = "Quantity must be between 1 and 100000"})" />
         </MudForm>

@@ -9,7 +9,7 @@ public partial class AddProductDialog
 
     private string Name;
     private string Description;
-    private string ProductType;
+    private ProductType ProductType;
     private decimal Price;
     private int AvailableQuantity;
 
