@@ -46,17 +46,29 @@ namespace BisleriumCafe.Pages
                     // Get the product type of the cart item
                     var productType = cartItem.Product.ProductType;
 
+                    Snackbar.Add("Inside for");
+
                     // Check if the product type is "coffee"
                     if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Find the member associated with the product (you might need to adjust this logic based on your data model)
-                        FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
-                            member.UserName.Equals(cartItem.Product.Name, StringComparison.OrdinalIgnoreCase));
+                        Snackbar.Add("TypeCoffee");
 
                         // If the member is found, increase the purchase count by the quantity in the cart
                         if (FoundMember != null)
                         {
+                            Snackbar.Add("Found");
                             FoundMember.PurchasesCount += cartItem.Quantity;
+
+                            // Check if the purchase count is a multiple of 10
+                            if (FoundMember.PurchasesCount % 10 == 0)
+                            {
+                                // Redeem a free complimentary coffee
+                                Snackbar.Add($"Congratulations! You've earned a free complimentary coffee.", Severity.Success);
+
+                                // Subtract 10 from the purchase count
+                                FoundMember.PurchasesCount -= 10;
+                            }
+
                             // Update the member in the repository
                             MemberRepository.Update(FoundMember);
                         }
@@ -73,6 +85,8 @@ namespace BisleriumCafe.Pages
                 Snackbar.Add("Cannot checkout with an empty cart.", Severity.Error);
             }
         }
+
+
 
         private class CartItem
         {
