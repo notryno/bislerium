@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BisleriumCafe.Data.Models;
+﻿namespace BisleriumCafe.Data.Models;
 
 public class Member : IModel, ICloneable
 {

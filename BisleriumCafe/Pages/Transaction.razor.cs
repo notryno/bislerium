@@ -7,6 +7,7 @@ namespace BisleriumCafe.Pages
         private string MemberInput { get; set; }
         private List<Product> Products;
         private List<CartItem> ShoppingCart = new List<CartItem>();
+        private Member FoundMember;
 
         protected override void OnInitialized()
         {
@@ -36,9 +37,42 @@ namespace BisleriumCafe.Pages
 
         private void Checkout()
         {
-            // Implement the checkout logic (e.g., send order to the server, process payment, etc.)
-            // You can also navigate to a checkout page if needed.
-            Snackbar.Add("Checkout functionality will be implemented here.", Severity.Info);
+            // Check if the cart is not empty
+            if (ShoppingCart.Count > 0)
+            {
+                // Iterate through cart items and identify associated members
+                foreach (var cartItem in ShoppingCart)
+                {
+                    // Get the product type of the cart item
+                    var productType = cartItem.Product.ProductType;
+
+                    // Check if the product type is "coffee"
+                    if (productType?.Name.Equals("coffee", StringComparison.OrdinalIgnoreCase) == true)
+
+                    {
+                        // Find the member associated with the product (you might need to adjust this logic based on your data model)
+                        FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
+                            member.UserName.Equals(cartItem.Product.Name, StringComparison.OrdinalIgnoreCase));
+
+                        // If the member is found, increase the purchase count by the quantity in the cart
+                        if (FoundMember != null)
+                        {
+                            FoundMember.PurchasesCount += cartItem.Quantity;
+                            // Update the member in the repository
+                            MemberRepository.Update(FoundMember);  // Assuming you have an Update method in your repository
+                        }
+                    }
+                }
+
+                // Clear the shopping cart after processing
+                ShoppingCart.Clear();
+
+                Snackbar.Add("Checkout successful.", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Cannot checkout with an empty cart.", Severity.Error);
+            }
         }
 
         private class CartItem
@@ -79,9 +113,30 @@ namespace BisleriumCafe.Pages
 
         private void SearchMember()
         {
-            // Implement your member search logic here
-            // You can use the MemberInput variable to get the entered username or phone number
-            Snackbar.Add($"Searching for member: {MemberInput}", Severity.Info);
+            // Check if MemberInput is a valid username or phone number
+            if (!string.IsNullOrWhiteSpace(MemberInput))
+            {
+                // Try to find the member by username
+                FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
+                    member.UserName.Equals(MemberInput, StringComparison.OrdinalIgnoreCase));
+
+                // If the member is not found by username, try to find by phone number
+                if (FoundMember == null)
+                {
+                    FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
+                        member.Phone.Equals(MemberInput, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+
+            if (FoundMember != null)
+            {
+                Snackbar.Add($"Member found: {FoundMember.UserName}", Severity.Success);
+                // Do something with the found member, if needed
+            }
+            else
+            {
+                Snackbar.Add($"No member found with the given username or phone number.", Severity.Error);
+            }
         }
 
     }

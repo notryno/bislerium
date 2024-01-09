@@ -53,4 +53,23 @@ internal class Repository<TSource> : RepositoryIO<TSource>, IRepository<TSource>
     {
         return _sourceData.Remove(item);
     }
+
+    public virtual void Update(TSource updatedItem)
+    {
+        var existingItem = _sourceData.FirstOrDefault(item => item.Id.Equals(updatedItem.Id));
+
+        if (existingItem != null)
+        {
+            // Remove the existing item
+            _sourceData.Remove(existingItem);
+
+            // Add the updated item
+            _sourceData.Add(updatedItem);
+        }
+        else
+        {
+            // Item not found, you might want to throw an exception or handle it based on your requirements
+            throw new ArgumentException($"Item with id {updatedItem.Id} not found in the repository.");
+        }
+    }
 }

@@ -48,7 +48,16 @@
         <MudTd DataLabel="User Name">@context.UserName</MudTd>
         <MudTd DataLabel="Phone">@context.Phone</MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Full Name">@context.FullName</MudTd>
-        <MudTd DataLabel="Is Regular Customer">@context.IsRegularCustomer ? "Yes" : "No"</MudTd>
+        <MudTd DataLabel="Regular Customer">
+            @if (@context.IsRegularCustomer)
+            {
+                <text>Yes</text>
+            }
+            else
+            {
+                <text>No</text>
+            }
+        </MudTd>
         <MudTd DataLabel="Purchases Count">@context.PurchasesCount</MudTd>
         <MudTd DataLabel="Free Coffee Redemption Count">@context.FreeCoffeeRedemptionCount</MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Last Purchase Date">@context.LastPurchaseDate.ToString("yyyy-MM-dd")</MudTd>

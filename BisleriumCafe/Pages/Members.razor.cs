@@ -31,8 +31,7 @@ public partial class Members
         }
         else
         {
-            // Handle the case where the repository is empty
-            // You might want to show a message or take other actions
+            Snackbar.Add("Empty");
             Elements = new List<Member>();
         }
     }

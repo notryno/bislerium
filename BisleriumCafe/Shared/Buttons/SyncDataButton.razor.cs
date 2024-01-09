@@ -15,6 +15,7 @@ public partial class SyncDataButton
         await UserRepository.FlushAsync();
         await SpareRepository.FlushAsync();
         await ProductRepository.FlushAsync();
+        await MemberRepository.FlushAsync();
         await ActivityLogRepository.FlushAsync();
         IsSaving = false;
 

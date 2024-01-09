@@ -22,9 +22,20 @@ public partial class AddMemberDialog
         await form.Validate();
         if (form.IsValid)
         {
-            // Perform the necessary action to add a member
-            // For example, you might use a service to handle member addition
-            // MemberService.AddMember(UserName, Phone, FullName, IsRegularCustomer);
+            var newMember = new Member
+            {
+                UserName = UserName,
+                Phone = Phone,
+                FullName = FullName,
+                IsRegularCustomer = IsRegularCustomer,
+                PurchasesCount = 0,
+                FreeCoffeeRedemptionCount = 0,
+                LastPurchaseDate = DateTime.MinValue,
+                MembershipStartDate = DateTime.Now,
+
+            };
+
+            MemberRepository.Add(newMember);
 
             ChangeParentState.Invoke();
 
