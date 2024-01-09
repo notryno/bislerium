@@ -1,0 +1,21 @@
+﻿@inject ISnackbar Snackbar
+@inject BisleriumCafe.Data.Services.AuthService AuthService
+@inject BisleriumCafe.Data.Repositories.Repository<Member> MemberRepository;
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudTextField T="string" @bind-Value="@UserName" Label="Username" Required="true" Validation="@(new Func<string, IEnumerable<string>>(UserNameValidation))" />
+            <MudTextField T="string" @bind-Value="@Phone" Label="Phone" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PhoneValidation))" />
+            <MudTextField T="string" @bind-Value="@FullName" Label="Fullname" Required="true" RequiredError="Fullname is required!" />
+            <div class="d-flex">
+                <MudSwitch @bind-Checked="@IsRegularCustomer" Label="Regular Customer" />
+            </div>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=> form.ResetAsync())" Class="mx-2">Reset</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="AddMember">Add</MudButton>
+    </DialogActions>
+</MudDialog>
