@@ -4,6 +4,7 @@ internal class Repository<TSource> : RepositoryIO<TSource>, IRepository<TSource>
 {
     public Repository(FileProvider<TSource> fileProvider) : base(fileProvider)
     {
+        _sourceData = new List<TSource>();
     }
 
     public virtual int Count => _sourceData.Count;
