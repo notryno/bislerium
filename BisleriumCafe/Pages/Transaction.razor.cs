@@ -47,8 +47,7 @@ namespace BisleriumCafe.Pages
                     var productType = cartItem.Product.ProductType;
 
                     // Check if the product type is "coffee"
-                    if (productType?.Name.Equals("coffee", StringComparison.OrdinalIgnoreCase) == true)
-
+                    if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
                     {
                         // Find the member associated with the product (you might need to adjust this logic based on your data model)
                         FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
@@ -59,7 +58,7 @@ namespace BisleriumCafe.Pages
                         {
                             FoundMember.PurchasesCount += cartItem.Quantity;
                             // Update the member in the repository
-                            MemberRepository.Update(FoundMember);  // Assuming you have an Update method in your repository
+                            MemberRepository.Update(FoundMember);
                         }
                     }
                 }
