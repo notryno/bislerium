@@ -1,8 +1,9 @@
 ﻿@page "/statistics"
 @layout MainLayout
 
-@inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository;  
-@inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository; 
+@inject BisleriumCafe.Data.Repositories.Repository<Product> ProductRepository;
+@inject BisleriumCafe.Data.Repositories.Repository<Transaction> TransactionRepository;
+@inject BisleriumCafe.Data.Services.AuthService AuthService;
 
 <MudButton ToggleColor="Color.Secondary" @onclick="ToggleTable">Toggle Table</MudButton>
 
@@ -21,9 +22,9 @@
         <RowTemplate>
             <!-- Add MudTd for each column -->
             <MudTd DataLabel="ID">@context.Id</MudTd>
-            <MudTd DataLabel="Coffee Type">@context.CoffeeType</MudTd>
-            <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
-            <MudTd DataLabel="Revenue">@context.Revenue</MudTd>
+            <MudTd DataLabel="Coffee Type">@context.ProductName</MudTd>
+            <MudTd DataLabel="Quantity">@GetQuantity(@context.ProductName)</MudTd>
+            <MudTd DataLabel="Revenue">@GetRevenue(@context.ProductName)</MudTd>
         </RowTemplate>
     </MudTable>
 }
@@ -42,29 +43,9 @@ else
         <RowTemplate>
             <!-- Add MudTd for each column -->
             <MudTd DataLabel="ID">@context.Id</MudTd>
-            <MudTd DataLabel="Coffee Add-ons">@context.CoffeeAddons</MudTd>
-            <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
-            <MudTd DataLabel="Revenue">@context.Revenue</MudTd>
+            <MudTd DataLabel="Coffee Add-ons">@context.ProductName</MudTd>
+            <MudTd DataLabel="Quantity">@GetQuantity(@context.ProductName)</MudTd>
+            <MudTd DataLabel="Revenue">@GetRevenue(@context.ProductName)</MudTd>
         </RowTemplate>
     </MudTable>
-}
-
-@code {
-    private bool showCoffeeTypeTable = true;
-    private List<StatisticsData> CoffeeTypeElements;  // Replace StatisticsData with your actual model for Coffee Type
-    private List<StatisticsData> CoffeeAddonsElements;  // Replace StatisticsData with your actual model for Coffee Add-ons
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch data for Coffee Type table
-        CoffeeTypeElements = await StatisticsRepository.GetCoffeeTypeDataAsync();  // Replace with actual method
-
-        // Fetch data for Coffee Add-ons table
-        CoffeeAddonsElements = await StatisticsRepository.GetCoffeeAddonsDataAsync();  // Replace with actual method
-    }
-
-    private void ToggleTable()
-    {
-        showCoffeeTypeTable = !showCoffeeTypeTable;
-    }
 }
