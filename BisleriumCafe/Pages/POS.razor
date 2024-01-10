@@ -47,7 +47,28 @@
                         </li>
                     }
                 </ul>
-                <MudText Typo="Typo.h6">Current Total: Rs. @CalculateTotal()</MudText>
+
+                
+
+                    <!-- Check if the member is found and regular -->
+                @if (FoundMember != null)
+                {
+                    if (isRegular)
+                    {
+                        <MudText Typo="Typo.body1" Class="mt-2">Subtotal: <span class="h6">Rs. @CalculateTotal()</span></MudText>
+                        <MudText Typo="Typo.body1" Class="mt-2">Discount: - <span class="h6">Rs. @CalculateRegularCustomerDiscount()</span></MudText>
+                    }
+
+                    <!-- Horizontal line -->
+                    <hr class="mt-2 mb-2" />
+
+                    <MudText Typo="Typo.h5">Total: <span class="h6">Rs. @CalculateTotalWithDiscount()</span></MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5">Current Total: <span class="h6">Rs. @CalculateTotal()</span></MudText>
+                }
+
 
                 <!-- Text input for member username or phone number -->
                 <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" />
@@ -58,6 +79,7 @@
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout">Checkout</MudButton>
             </MudPaper>
         </MudItem>
+
 
     </MudGrid>
 </MudContainer>

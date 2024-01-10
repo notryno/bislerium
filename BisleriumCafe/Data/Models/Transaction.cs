@@ -7,7 +7,7 @@ public class Transaction : IModel, ICloneable
     public DateTime PurchaseDate { get; set; }
     public string ProductName { get; set; }
     public int Quantity { get; set; }
-    public decimal Discount { get; set; }
+    public string Discount { get; set; }
 
 
 
