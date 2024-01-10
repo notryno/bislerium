@@ -69,6 +69,7 @@
         <PackageReference Include="ExcelMapper" Version="5.2.564" />
         <PackageReference Include="Bogus" Version="35.3.0" />
         <PackageReference Include="PSC.Blazor.Components.Chartjs" Version="6.0.43" />
+        <PackageReference Include="QuestPDF" Version="2023.12.2" />
     </ItemGroup>
 
     <ItemGroup>

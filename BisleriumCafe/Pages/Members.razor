@@ -4,6 +4,7 @@
 @inject BisleriumCafe.Data.Repositories.Repository<Member> MemberRepository;
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject BisleriumCafe.Data.Services.AuthService AuthService
 
 <MudTable Elevation="0"
           Items="@Elements"
@@ -74,6 +75,7 @@
         </MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Membership Start Date">@context.MembershipStartDate.ToString("yyyy-MM-dd")</MudTd>
     </RowTemplate>
+
 
     <RowEditingTemplate>
         <MudTd DataLabel="ID"><MudChip>@context.Id.ToString().Substring(0, 8)</MudChip></MudTd>
