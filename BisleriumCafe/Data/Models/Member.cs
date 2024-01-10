@@ -9,8 +9,30 @@ public class Member : IModel, ICloneable
     public bool IsRegularCustomer { get; set; }
     public int PurchasesCount { get; set; }
     public int FreeCoffeeRedemptionCount { get; set; }
-    public DateTime LastPurchaseDate { get; set; }
+    //public DateTime LastPurchaseDate { get; set; }
     public DateTime MembershipStartDate { get; set; }
+    private bool _isValid;
+
+    public bool IsValid
+    {
+        get
+        {
+            // If IsValid has been manually set, return the stored value
+            if (_isValid)
+            {
+                return _isValid;
+            }
+
+            // Otherwise, check if the membership is still valid for 1 month
+            return (DateTime.Now - MembershipStartDate).TotalDays <= 30;
+        }
+        set
+        {
+            // Allow manual setting of IsValid
+            _isValid = value;
+        }
+    }
+    
 
     public object Clone()
     {
@@ -23,7 +45,8 @@ public class Member : IModel, ICloneable
             IsRegularCustomer = IsRegularCustomer,
             PurchasesCount = PurchasesCount,
             FreeCoffeeRedemptionCount = FreeCoffeeRedemptionCount,
-            LastPurchaseDate = LastPurchaseDate,
+            //LastPurchaseDate = LastPurchaseDate,
+            IsValid = IsValid,
             MembershipStartDate = MembershipStartDate,
         };
     }

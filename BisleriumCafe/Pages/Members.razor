@@ -39,7 +39,8 @@
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.IsRegularCustomer)">Regular Customer</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.PurchasesCount)">Purchases Count</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.FreeCoffeeRedemptionCount)">Free Coffee Redemption Count</MudTableSortLabel></MudTh>
-        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.LastPurchaseDate)">Last Purchase Date</MudTableSortLabel></MudTh>
+        @* <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.LastPurchaseDate)">Last Purchase Date</MudTableSortLabel></MudTh> *@
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.IsValid)">Membership Validity</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Member, object>(x => x.MembershipStartDate)">Membership Start Date</MudTableSortLabel></MudTh>
     </HeaderContent>
 
@@ -60,7 +61,17 @@
         </MudTd>
         <MudTd DataLabel="Purchases Count">@context.PurchasesCount</MudTd>
         <MudTd DataLabel="Free Coffee Redemption Count">@context.FreeCoffeeRedemptionCount</MudTd>
-        <MudTd Style="white-space: nowrap;" DataLabel="Last Purchase Date">@context.LastPurchaseDate.ToString("yyyy-MM-dd")</MudTd>
+        @* <MudTd Style="white-space: nowrap;" DataLabel="Last Purchase Date">@context.LastPurchaseDate.ToString("yyyy-MM-dd")</MudTd> *@
+            <MudTd DataLabel="Membership Validity">
+                @if (@context.IsValid)
+            {
+                <text>Yes</text>
+            }
+            else
+            {
+                <text>No</text>
+            }
+        </MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Membership Start Date">@context.MembershipStartDate.ToString("yyyy-MM-dd")</MudTd>
     </RowTemplate>
 
@@ -82,12 +93,15 @@
         <MudTd DataLabel="Free Coffee Redemption Count">
             <MudNumericField @bind-Value="@context.FreeCoffeeRedemptionCount" />
         </MudTd>
-        <MudTd Style="white-space: nowrap;" DataLabel="Last Purchase Date">
+        @* <MudTd Style="white-space: nowrap;" DataLabel="Last Purchase Date">
             <MudDatePicker @bind-Value="@context.LastPurchaseDate" />
-        </MudTd>
+        </MudTd> *@
+         <MudTd DataLabel="Membership Validity">
+             <MudSwitch @bind-Checked="@context.IsValid" Color="Color.Primary" Label="Membership Validity" />
+         </MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Membership Start Date">
-            <MudDatePicker @bind-Value="@context.MembershipStartDate" />
-        </MudTd>
+             <MudDatePicker @bind-Value="@context.MembershipStartDate" PickerVariant="PickerVariant.Dialog" Editable="true" />
+         </MudTd>
     </RowEditingTemplate>
 
 

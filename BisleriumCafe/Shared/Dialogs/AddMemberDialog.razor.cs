@@ -30,7 +30,8 @@ public partial class AddMemberDialog
                 IsRegularCustomer = IsRegularCustomer,
                 PurchasesCount = 0,
                 FreeCoffeeRedemptionCount = 0,
-                LastPurchaseDate = DateTime.MinValue,
+                //LastPurchaseDate = DateTime.MinValue,
+                IsValid = true,
                 MembershipStartDate = DateTime.Now,
 
             };

@@ -15,19 +15,19 @@
                 @foreach (var product in Products)
                 {
                     <MudItem>
-                        <MudCard>
+                        <MudCard Class="product-card">
                             <MudCardMedia>
-                                <!-- Display product image or any relevant content -->
-                                <img src="product.ImageUrl" alt="@product.Name" />
+                                @* <img src="@product.ImageUrl" alt="@product.Name" /> *@
                             </MudCardMedia>
                             <MudCardContent>
-                                <MudText Typo="Typo.h4">@product.Name</MudText>
-                                <MudText Typo="Typo.body2">Price: Rs. @product.Price</MudText>
-                            </MudCardContent>
-                            <MudCardActions>
-                                <MudButton Variant="Variant.Outlined" OnClick="() => AddToCart(product)">Add to Cart</MudButton>
-                            </MudCardActions>
-                        </MudCard>
+                                <MudText Typo="Typo.h6">@product.Name</MudText>
+                                    <MudText Typo="Typo.subtitle2">Price: Rs. @product.Price</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Outlined" OnClick="() => AddToCart(product)">Add to Cart</MudButton>
+                                </MudCardActions>
+                            </MudCard>
+
                     </MudItem>
                 }
             </MudGrid>
@@ -35,7 +35,7 @@
 
         <!-- Shopping Cart Column -->
         <MudItem xs="12" md="4">
-            <MudPaper>
+            <MudPaper Class="shopping-cart">
                 <MudText Typo="Typo.h5">Shopping Cart</MudText>
                 <ul>
                     @foreach (var cartItem in ShoppingCart)
@@ -83,3 +83,20 @@
 
     </MudGrid>
 </MudContainer>
+
+<style>
+    .product-card {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        margin: 8px;
+        text-align: center;
+    }
+
+    .shopping-cart {
+        background-color: #f8f8f8;
+        padding: 16px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

@@ -27,6 +27,15 @@ public partial class Members
 
         if (MemberRepository.Count > 0)
         {
+            var membersCopy = MemberRepository.GetAll().ToList();
+
+            // Check the validity of membership for each member
+            foreach (var member in membersCopy)
+            {
+                // Update the IsValid property based on the membership start date
+                member.IsValid = (DateTime.Now - member.MembershipStartDate).TotalDays <= 30;
+                MemberRepository.Update(member);
+            }
             Elements = MemberRepository.GetAll();
         }
         else
@@ -49,7 +58,8 @@ public partial class Members
         ((Member)element).IsRegularCustomer = ElementBeforeEdit.IsRegularCustomer;
         ((Member)element).PurchasesCount = ElementBeforeEdit.PurchasesCount;
         ((Member)element).FreeCoffeeRedemptionCount = ElementBeforeEdit.FreeCoffeeRedemptionCount;
-        ((Member)element).LastPurchaseDate = ElementBeforeEdit.LastPurchaseDate;
+        //((Member)element).LastPurchaseDate = ElementBeforeEdit.LastPurchaseDate;
+        ((Member)element).IsValid = ElementBeforeEdit.IsValid;
         ((Member)element).MembershipStartDate = ElementBeforeEdit.MembershipStartDate;
     }
 
@@ -63,7 +73,8 @@ public partial class Members
                || element.IsRegularCustomer.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.PurchasesCount.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.FreeCoffeeRedemptionCount.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
-               || element.LastPurchaseDate.ToString("yyyy-MM-dd").Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+               //|| element.LastPurchaseDate.ToString("yyyy-MM-dd").Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+               || element.IsValid.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.MembershipStartDate.ToString("yyyy-MM-dd").Contains(SearchString, StringComparison.OrdinalIgnoreCase);
     }
 

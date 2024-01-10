@@ -42,29 +42,20 @@ namespace BisleriumCafe.Pages
             if (ShoppingCart.Count > 0)
             {
                 decimal totalDiscount = 0;
-                // Iterate through cart items and identify associated members
+
+                // Iterate through cart items
                 foreach (var cartItem in ShoppingCart)
                 {
                     // Get the product type of the cart item
                     var productType = cartItem.Product.ProductType;
 
-                    Snackbar.Add($"Inside for - Product Type: {productType}");
-
                     // Check if the product type is "coffee"
                     if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
                     {
-                        Snackbar.Add("TypeCoffee");
-
-                        // If the member is found, increase the purchase count by the quantity in the cart
+                        // If there is a member, update the purchase count
                         if (FoundMember != null)
                         {
-                            Snackbar.Add("Found");
-                            Snackbar.Add($"Current Purchase Count: {FoundMember.PurchasesCount}");
-
                             FoundMember.PurchasesCount += cartItem.Quantity;
-
-                            //// Check if the member is a regular customer (daily purchases for a full month excluding weekends)
-                            //UpdateRegularCustomerStatus(FoundMember);
 
                             if (FoundMember.IsRegularCustomer)
                             {
@@ -89,35 +80,16 @@ namespace BisleriumCafe.Pages
 
                                 // Subtract the corresponding purchase count for the earned drinks
                                 FoundMember.PurchasesCount -= complimentaryDrinks * 10;
-
-                                Snackbar.Add($"Updated Purchase Count: {FoundMember.PurchasesCount}");
-                            }
-
-                            string totalDiscountString = FoundMember?.IsRegularCustomer == true ? "10%" : "-";
-
-                            // Create a Transaction object
-                            var transaction = new Transaction
-                            {
-                                MemberUsername = FoundMember != null ? FoundMember.UserName : "Regular Customer",
-                                PurchaseDate = DateTime.Now,
-                                ProductName = cartItem.Product.Name,
-                                Quantity = cartItem.Quantity,
-                                Discount = totalDiscountString, // Default discount for now, you can adjust this based on logic
-                            };
-
-                            // Add the transaction to the repository
-                            TransactionRepository.Add(transaction);
-
-                            if (FoundMember != null)
-                            {
-                                MemberRepository.Update(FoundMember);
                             }
                         }
-                        else
+
+                        // Create a transaction for the cart item
+                        CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
+
+                        // Update the member in the repository
+                        if (FoundMember != null)
                         {
-                            // No member found, handle it accordingly (you can adjust this based on your requirements)
-                            // For now, let's assume no discount for non-members
-                            Snackbar.Add($"No member found. No discount applied for {cartItem.Product.Name}.");
+                            MemberRepository.Update(FoundMember);
                         }
                     }
                 }
@@ -131,6 +103,22 @@ namespace BisleriumCafe.Pages
             {
                 Snackbar.Add("Cannot checkout with an empty cart.", Severity.Error);
             }
+        }
+
+        private void CreateTransaction(CartItem cartItem, string memberUsername)
+        {
+            // Create a Transaction object
+            var transaction = new Transaction
+            {
+                MemberUsername = memberUsername,
+                PurchaseDate = DateTime.Now,
+                ProductName = cartItem.Product.Name,
+                Quantity = cartItem.Quantity,
+                Discount = memberUsername != "-" ? "10%" : "-", // Default discount for members, adjust as needed
+            };
+
+            // Add the transaction to the repository
+            TransactionRepository.Add(transaction);
         }
 
 
@@ -182,6 +170,8 @@ namespace BisleriumCafe.Pages
         //    MemberRepository.Update(member);
         //}
 
+
+        // Atleast one purchase per month
         private void UpdateRegularCustomerStatus(Member member)
         {
             // Check if the member is already marked as a regular customer
@@ -214,6 +204,56 @@ namespace BisleriumCafe.Pages
 
             MemberRepository.Update(member);
         }
+
+        // Per month excluding weekends regular member logic
+        //private void UpdateRegularCustomerStatus(Member member)
+        //{
+        //    // Check if the member is already marked as a regular customer
+        //    if (member.IsRegularCustomer)
+        //    {
+        //        // Skip the calculation if the member is already a regular customer
+        //        return;
+        //    }
+
+        //    // Get the current date
+        //    DateTime currentDate = DateTime.Now;
+
+        //    // Get the start date for the month
+        //    DateTime monthStartDate = new DateTime(currentDate.Year, currentDate.Month, 1);
+
+        //    // Initialize counters for weekdays
+        //    int totalWeekdays = 0;
+        //    int purchasesOnWeekdays = 0;
+
+        //    // Iterate through each day of the month
+        //    for (DateTime date = monthStartDate; date < currentDate; date = date.AddDays(1))
+        //    {
+        //        // Check if the day is a weekday (Monday to Friday)
+        //        if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+        //        {
+        //            totalWeekdays++;
+
+        //            // Check if any transactions were made on this weekday
+        //            bool madePurchaseOnThisDay = TransactionRepository.GetAll()
+        //                .Any(transaction => transaction.MemberUsername.Equals(member.UserName, StringComparison.OrdinalIgnoreCase)
+        //                                    && transaction.PurchaseDate.Date == date.Date);
+
+        //            if (madePurchaseOnThisDay)
+        //            {
+        //                purchasesOnWeekdays++;
+        //            }
+        //        }
+        //    }
+
+        //    // Update the IsRegularCustomer property based on the condition
+        //    member.IsRegularCustomer = totalWeekdays > 0 && purchasesOnWeekdays == totalWeekdays;
+
+        //    // Update the member in the repository
+        //    System.Diagnostics.Debug.WriteLine($"Going to update inside UpdateRegularCustomerStatus");
+
+        //    MemberRepository.Update(member);
+        //}
+
 
         private class CartItem
         {
@@ -251,8 +291,6 @@ namespace BisleriumCafe.Pages
             System.Diagnostics.Debug.WriteLine($"SearchMember called");
             // Check if MemberInput is a valid username or phone number
             FoundMember = validMember();
-
-            System.Diagnostics.Debug.WriteLine($"Initial FoundMember: {FoundMember.UserName}");
 
             if (FoundMember != null)
             {
@@ -328,14 +366,21 @@ namespace BisleriumCafe.Pages
             {
                 // Try to find the member by username
                 FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
-                    member.UserName.Equals(MemberInput, StringComparison.OrdinalIgnoreCase));
+                    member.UserName.Equals(MemberInput, StringComparison.OrdinalIgnoreCase) && member.IsValid);
 
                 // If the member is not found by username, try to find by phone number
                 if (FoundMember == null)
                 {
                     FoundMember = MemberRepository.GetAll().FirstOrDefault(member =>
-                        member.Phone.Equals(MemberInput, StringComparison.OrdinalIgnoreCase));
+                        member.Phone.Equals(MemberInput, StringComparison.OrdinalIgnoreCase) && member.IsValid);
 
+                }
+
+
+                if (FoundMember == null)
+                {
+                    // Member not found or not valid, show Snackbar message
+                    Snackbar.Add("Member not found or membership not valid. Renew membership.", Severity.Error);
                 }
 
                 return FoundMember;
