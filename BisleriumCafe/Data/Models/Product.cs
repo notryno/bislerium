@@ -14,6 +14,8 @@ public class Product : IModel, ICloneable
 
     public int AvailableQuantity { get; set; }
 
+    private string ImageUrl { get; set; }
+
     public object Clone()
     {
         return new Product
@@ -23,7 +25,8 @@ public class Product : IModel, ICloneable
             Description = Description,
             ProductType = ProductType,
             Price = Price,
-            AvailableQuantity = AvailableQuantity
+            AvailableQuantity = AvailableQuantity,
+            ImageUrl = ImageUrl,
         };
     }
 

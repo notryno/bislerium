@@ -1,4 +1,6 @@
 ﻿using System;
+using MathNet.Numerics.Differentiation;
+
 namespace BisleriumCafe.Pages
 {
     public partial class POS
@@ -9,6 +11,7 @@ namespace BisleriumCafe.Pages
         private List<CartItem> ShoppingCart = new List<CartItem>();
         private Member FoundMember;
         private bool isRegular;
+        private bool MemberFound=false;
 
         protected override void OnInitialized()
         {
@@ -41,63 +44,72 @@ namespace BisleriumCafe.Pages
             // Check if the cart is not empty
             if (ShoppingCart.Count > 0)
             {
-                decimal totalDiscount = 0;
+                if(AtleastOneCoffee()){
+                    decimal totalDiscount = 0;
 
-                // Iterate through cart items
-                foreach (var cartItem in ShoppingCart)
-                {
-                    // Get the product type of the cart item
-                    var productType = cartItem.Product.ProductType;
-
-                    // Check if the product type is "coffee"
-                    if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
+                    // Iterate through cart items
+                    foreach (var cartItem in ShoppingCart)
                     {
-                        // If there is a member, update the purchase count
-                        if (FoundMember != null)
+                        // Get the product type of the cart item
+                        var productType = cartItem.Product.ProductType;
+
+                        // Check if the product type is "coffee"
+                        if (productType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
                         {
-                            FoundMember.PurchasesCount += cartItem.Quantity;
-
-                            if (FoundMember.IsRegularCustomer)
+                            // If there is a member, update the purchase count
+                            if (FoundMember != null)
                             {
-                                // Calculate the discount amount without modifying the original price
-                                decimal discountAmount = CalculateDiscount(cartItem.Product.Price, 0.1m); // 10% discount
+                                FoundMember.PurchasesCount += cartItem.Quantity;
 
-                                // Display the discount information
-                                Snackbar.Add($"You've received a 10% discount on {cartItem.Product.Name}. Discount Amount: {discountAmount}");
+                                if (FoundMember.IsRegularCustomer)
+                                {
+                                    // Calculate the discount amount without modifying the original price
+                                    decimal discountAmount = CalculateDiscount(cartItem.Product.Price, 0.1m); // 10% discount
 
-                                // Accumulate the discount for the entire cart
-                                totalDiscount += discountAmount;
+                                    // Display the discount information
+                                    Snackbar.Add($"You've received a 10% discount on {cartItem.Product.Name}. Discount Amount: {discountAmount}");
+
+                                    // Accumulate the discount for the entire cart
+                                    totalDiscount += discountAmount;
+                                }
+
+                                // Calculate the number of complimentary drinks earned
+                                int complimentaryDrinks = FoundMember.PurchasesCount / 10;
+
+                                // Check if the member earned any complimentary drinks
+                                if (complimentaryDrinks > 0)
+                                {
+                                    // Redeem complimentary drinks
+                                    Snackbar.Add($"Congratulations! You've earned {complimentaryDrinks} free complimentary drink(s).", Severity.Success);
+
+                                    FoundMember.FreeCoffeeRedemptionCount += complimentaryDrinks;
+
+                                    // Subtract the corresponding purchase count for the earned drinks
+                                    FoundMember.PurchasesCount -= complimentaryDrinks * 10;
+                                }
                             }
 
-                            // Calculate the number of complimentary drinks earned
-                            int complimentaryDrinks = FoundMember.PurchasesCount / 10;
+                            // Create a transaction for the cart item
+                            CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
 
-                            // Check if the member earned any complimentary drinks
-                            if (complimentaryDrinks > 0)
+                            // Update the member in the repository
+                            if (FoundMember != null)
                             {
-                                // Redeem complimentary drinks
-                                Snackbar.Add($"Congratulations! You've earned {complimentaryDrinks} free complimentary drink(s).", Severity.Success);
-
-                                // Subtract the corresponding purchase count for the earned drinks
-                                FoundMember.PurchasesCount -= complimentaryDrinks * 10;
+                                MemberRepository.Update(FoundMember);
                             }
-                        }
-
-                        // Create a transaction for the cart item
-                        CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
-
-                        // Update the member in the repository
-                        if (FoundMember != null)
+                        } else
                         {
-                            MemberRepository.Update(FoundMember);
+                            // Create a transaction for the cart item
+                            CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
+
                         }
                     }
+
+                    // Clear the shopping cart after processing
+                    ShoppingCart.Clear();
+
+                    Snackbar.Add("Checkout successful.", Severity.Success);
                 }
-
-                // Clear the shopping cart after processing
-                ShoppingCart.Clear();
-
-                Snackbar.Add("Checkout successful.", Severity.Success);
             }
             else
             {
@@ -113,14 +125,14 @@ namespace BisleriumCafe.Pages
                 MemberUsername = memberUsername,
                 PurchaseDate = DateTime.Now,
                 ProductName = cartItem.Product.Name,
+                ProductType = cartItem.Product.ProductType,
                 Quantity = cartItem.Quantity,
-                Discount = memberUsername != "-" ? "10%" : "-", // Default discount for members, adjust as needed
+                Discount = isRegular ? "10%" : "-", // Default discount for members, adjust as needed
             };
 
             // Add the transaction to the repository
             TransactionRepository.Add(transaction);
         }
-
 
 
 
@@ -201,7 +213,7 @@ namespace BisleriumCafe.Pages
 
             // Update the member in the repository
             System.Diagnostics.Debug.WriteLine($"Going to update inside UpdateRegularCustomerStatus");
-
+            isRegular = false;
             MemberRepository.Update(member);
         }
 
@@ -286,6 +298,18 @@ namespace BisleriumCafe.Pages
             }
         }
 
+        private void ClearMember()
+        {
+            // Reset MemberFound to false
+            MemberFound = false;
+
+            // Clear the MemberInput
+            MemberInput = "";
+
+            // Clear the FoundMember
+            FoundMember = null;
+        }
+
         private void SearchMember()
         {
             System.Diagnostics.Debug.WriteLine($"SearchMember called");
@@ -302,6 +326,8 @@ namespace BisleriumCafe.Pages
                 FoundMember = validMember();
                 System.Diagnostics.Debug.WriteLine($"Second FoundMember: {FoundMember.UserName}");
 
+                MemberFound = true;
+
                 Snackbar.Add($"Is regular: {FoundMember.IsRegularCustomer}", Severity.Success);
                 isRegular = FoundMember.IsRegularCustomer;
             }
@@ -310,6 +336,7 @@ namespace BisleriumCafe.Pages
                 Snackbar.Add($"No member found with the given username or phone number.", Severity.Error);
                 // Reset the isRegular variable when member is not found
                 isRegular = false;
+                MemberFound = false;
             }
         }
 
@@ -387,6 +414,32 @@ namespace BisleriumCafe.Pages
             }
             return null;
         }
+
+        private bool AtleastOneCoffee()
+        {
+            bool atleast = false;
+
+            if (ShoppingCart.Count > 0)
+            {
+                foreach (var cartItem in ShoppingCart)
+                {
+                    // Assuming ProductType is a string property in the Product class
+                    if (cartItem.Product.ProductType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
+                    {
+                        atleast = true;
+                        break; // No need to continue checking once we find a coffee product
+                    }
+                }
+            }
+            if (!atleast)
+            {
+                // Show Snackbar message if no coffee in the cart
+                Snackbar.Add("Please add at least one coffee to the cart.", Severity.Error);
+            }
+
+            return atleast;
+        }
+
     }
 
 }

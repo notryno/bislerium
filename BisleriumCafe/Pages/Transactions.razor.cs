@@ -31,14 +31,13 @@ public partial class Transactions
 
             foreach (Transaction s in Elements)
             {
-                // Initialize any additional tracking dictionaries if needed
+               
             }
 
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error in OnInitialized: {ex.Message}");
-            // Log or handle the exception as needed.
         }
     }
 
@@ -51,7 +50,6 @@ public partial class Transactions
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error in BackupItem: {ex.Message}");
-            // Log or handle the exception as needed.
         }
     }
 
@@ -62,6 +60,7 @@ public partial class Transactions
             ((Transaction)element).MemberUsername = ElementBeforeEdit.MemberUsername;
             ((Transaction)element).PurchaseDate = ElementBeforeEdit.PurchaseDate;
             ((Transaction)element).ProductName = ElementBeforeEdit.ProductName;
+            ((Transaction)element).ProductType = ElementBeforeEdit.ProductType;
             ((Transaction)element).Quantity = ElementBeforeEdit.Quantity;
             ((Transaction)element).Discount = ElementBeforeEdit.Discount;
         }
@@ -78,10 +77,9 @@ public partial class Transactions
                || element.MemberUsername.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.PurchaseDate.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.ProductName.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+               || element.ProductType.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Quantity.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Discount.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
     }
-
-    // Implement the remaining methods and logic specific to your Transaction model
 
 }

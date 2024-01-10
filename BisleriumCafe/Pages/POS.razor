@@ -15,17 +15,17 @@
                 @foreach (var product in Products)
                 {
                     <MudItem>
-                        <MudCard Class="product-card">
-                            <MudCardMedia>
+                        <MudCard Class="product-card" @onclick="() => AddToCart(product)" style="transition: background-color 0.3s; cursor: pointer;">
+                            <!--<MudCardMedia>-->
                                 @* <img src="@product.ImageUrl" alt="@product.Name" /> *@
-                            </MudCardMedia>
+                            <!--</MudCardMedia>-->
                             <MudCardContent>
                                 <MudText Typo="Typo.h6">@product.Name</MudText>
                                     <MudText Typo="Typo.subtitle2">Price: Rs. @product.Price</MudText>
                                 </MudCardContent>
-                                <MudCardActions>
+                                @*<MudCardActions>
                                     <MudButton Variant="Variant.Outlined" OnClick="() => AddToCart(product)">Add to Cart</MudButton>
-                                </MudCardActions>
+                                </MudCardActions>*@
                             </MudCard>
 
                     </MudItem>
@@ -35,7 +35,7 @@
 
         <!-- Shopping Cart Column -->
         <MudItem xs="12" md="4">
-            <MudPaper Class="shopping-cart">
+            <MudPaper style="padding: 16px; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Class="shopping-cart">
                 <MudText Typo="Typo.h5">Shopping Cart</MudText>
                 <ul>
                     @foreach (var cartItem in ShoppingCart)
@@ -48,33 +48,55 @@
                     }
                 </ul>
 
-                
 
-                    <!-- Check if the member is found and regular -->
+
+                <!-- Check if the member is found and regular -->
                 @if (FoundMember != null)
                 {
                     if (isRegular)
                     {
                         <MudText Typo="Typo.body1" Class="mt-2">Subtotal: <span class="h6">Rs. @CalculateTotal()</span></MudText>
                         <MudText Typo="Typo.body1" Class="mt-2">Discount: - <span class="h6">Rs. @CalculateRegularCustomerDiscount()</span></MudText>
-                    }
 
+                    }
                     <!-- Horizontal line -->
                     <hr class="mt-2 mb-2" />
+                    <MudText Typo="Typo.h5">
+                        Total:
+                        <span class="h6">
+                            Rs. @(isRegular ? CalculateTotalWithDiscount() : CalculateTotal())
+                        </span>
+                    </MudText>
 
-                    <MudText Typo="Typo.h5">Total: <span class="h6">Rs. @CalculateTotalWithDiscount()</span></MudText>
                 }
                 else
                 {
-                    <MudText Typo="Typo.h5">Current Total: <span class="h6">Rs. @CalculateTotal()</span></MudText>
+                    <!-- Horizontal line -->
+                    <hr class="mt-2 mb-2" />
+                    <MudText Typo="Typo.h5">Total: <span class="h6">Rs. @CalculateTotal()</span></MudText>
                 }
 
 
-                <!-- Text input for member username or phone number -->
-                <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" />
+
 
                 <!-- Button for searching member -->
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember">Search Member</MudButton>
+                @if (!MemberFound)
+                {
+                    <!-- Text input for member username or phone number -->
+                    <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember">Search Member</MudButton>
+                }
+
+                <!-- Show the found member information if a member is found -->
+                @if (MemberFound && FoundMember != null)
+                {
+                    <!-- Set the found username in the text box -->
+                    <MudTextField Label="Member Username" @bind-Value="FoundMember.UserName" ReadOnly="true" />
+
+                    <!-- Show the full member name below the text box -->
+                    <MudText Typo="Typo.body1">Full Name: @FoundMember.FullName</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ClearMember">Clear Member</MudButton>
+                }
 
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout">Checkout</MudButton>
             </MudPaper>
@@ -93,10 +115,12 @@
         text-align: center;
     }
 
-    .shopping-cart {
-        background-color: #f8f8f8;
-        padding: 16px;
-        border: 1px solid #ddd;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .product-card:hover {
+            /*            background-color: #f0f0f0;*/
+            opacity: 0.8;
+        }
+
+        .product-card:active {
+            opacity: 0.5;
+        }
 </style>

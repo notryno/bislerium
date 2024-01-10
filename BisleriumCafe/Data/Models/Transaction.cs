@@ -6,6 +6,7 @@ public class Transaction : IModel, ICloneable
     public string MemberUsername { get; set; }
     public DateTime PurchaseDate { get; set; }
     public string ProductName { get; set; }
+    public ProductType ProductType { get; set; }
     public int Quantity { get; set; }
     public string Discount { get; set; }
 
@@ -19,6 +20,7 @@ public class Transaction : IModel, ICloneable
             MemberUsername = MemberUsername,
             PurchaseDate = PurchaseDate,
             ProductName = ProductName,
+            ProductType = ProductType,
             Quantity = Quantity,
             Discount = Discount,
         };

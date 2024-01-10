@@ -47,6 +47,7 @@
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.MemberUsername)">Member Username</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.PurchaseDate)">Purchase Date</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.ProductName)">Product Name</MudTableSortLabel></MudTh>
+        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.ProductType)">Product Type</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.Quantity)">Quantity</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Transaction, object>(x => x.Discount)">Discount</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -58,7 +59,8 @@
         <MudTd Style="white-space: nowrap;" DataLabel="Member Username">@context.MemberUsername</MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Purchase Date">@context.PurchaseDate.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Product Name">@context.ProductName</MudTd>
-        <MudTd Style="white-space: nowrap;" DataLabel="Quantity">@context.Quantity</MudTd>
+        <MudTd Style="white-space: nowrap;" DataLabel="Product Type">@context.ProductType</MudTd>
+                <MudTd Style="white-space: nowrap;" DataLabel="Quantity">@context.Quantity</MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="Discount">@context.Discount</MudTd>
     </RowTemplate>
 
@@ -73,6 +75,9 @@
         </MudTd>
         <MudTd DataLabel="Product Name">
             <MudTextField @bind-Value="@context.ProductName" Required />
+        </MudTd>
+        <MudTd DataLabel="Product Type">
+            <MudTextField @bind-Value="@context.ProductType" Required />
         </MudTd>
         <MudTd DataLabel="Quantity">
             <MudTextField @bind-Value="@context.Quantity" Required />
