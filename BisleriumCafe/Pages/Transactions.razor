@@ -21,6 +21,7 @@
           @bind-SelectedItem="SelectedTransaction"
           SortLabel="Sort By"
           CommitEditTooltip="Commit Edit"
+          OnPreviewEditClick="@(() => ProductDescTracks[SelectedTransaction.Id] = false)"
           RowsPerPage="25"
           OnCommitEditClick="@(() => Snackbar.Add("Transaction Updated!", Severity.Success))"
           RowEditPreview="BackupItem"

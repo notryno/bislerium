@@ -11,24 +11,22 @@ namespace BisleriumCafe.Pages
     {
         public const string Route = "/statistics";
 
-
         private bool showCoffeeTypeTable = true;
-        private IEnumerable<Transaction> CoffeeTypeElements;
-        private IEnumerable<Transaction> CoffeeAddonsElements;
 
-        [CascadingParameter]
-        private Action<string> SetAppBarTitle { get; set; }
 
-        protected sealed override void OnInitialized()
+        private IEnumerable<SummedTransaction> SummedCoffeeTypeElements;
+        private IEnumerable<SummedTransaction> SummedCoffeeAddonsElements;
+
+        protected override void OnInitialized()
         {
             try
             {
-                SetAppBarTitle.Invoke("Manage Products");
-                CoffeeTypeElements = TransactionRepository.GetAll();
-                CoffeeAddonsElements = TransactionRepository.GetAll();
+                //SetAppBarTitle.Invoke("Manage Products");
 
+                var transactions = TransactionRepository.GetAll();
+                SummedCoffeeTypeElements = SumTransactions(transactions, "CoffeeType");
+                SummedCoffeeAddonsElements = SumTransactions(transactions, "CoffeeAddons");
             }
-
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Error in OnInitialized: {ex.Message}");
@@ -39,22 +37,35 @@ namespace BisleriumCafe.Pages
         {
             showCoffeeTypeTable = !showCoffeeTypeTable;
         }
-        private decimal GetQuantity(string productName)
+        private class SummedTransaction
         {
-            var transactions = TransactionRepository.GetAll().Where(t => t.ProductName == productName);
-            return transactions.Sum(t => t.Quantity);
+            public Guid Id { get; set; }
+            public string ProductName { get; set; }
+            public decimal Quantity { get; set; }
+            public decimal Revenue { get; set; }
         }
 
-        private decimal GetRevenue(string productName)
+        private IEnumerable<SummedTransaction> SumTransactions(IEnumerable<Transaction> transactions, string productType)
         {
-            var product = ProductRepository.GetAll().FirstOrDefault(p => p.Name == productName);
-            if (product != null)
-            {
-                var transactions = TransactionRepository.GetAll().Where(t => t.ProductName == productName);
-                return transactions.Sum(t => t.Quantity * product.Price);
-            }
+            var groupedTransactions = transactions
+                .Where(t => t.ProductType.ToString() == productType)
+                .GroupBy(t => t.Id)
+                .Select(group => new SummedTransaction
+                {
+                    Id = group.Key,
+                    ProductName = group.First().ProductName,
+                    Quantity = group.Sum(t => t.Quantity),
+                    Revenue = group.Sum(t => t.Quantity * GetProductPrice(t.Id)),
+                });
 
-            return 0;
+            return groupedTransactions;
         }
+
+        private decimal GetProductPrice(Guid productId)
+        {
+            var product = ProductRepository.GetAll().FirstOrDefault(p => p.Id == productId);
+            return product?.Price ?? 0;
+        }
+
     }
 }

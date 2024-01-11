@@ -9,7 +9,7 @@
 
 @if (showCoffeeTypeTable)
 {
-    <MudTable Elevation="0" Items="@CoffeeTypeElements" ...>
+    <MudTable Elevation="0" Items="@SummedCoffeeTypeElements">
         <!-- Add your Coffee Type table properties here -->
         <!-- Coffee Type table columns: ID, Coffee Type, Quantity, Revenue -->
         <HeaderContent>
@@ -23,14 +23,14 @@
             <!-- Add MudTd for each column -->
             <MudTd DataLabel="ID">@context.Id</MudTd>
             <MudTd DataLabel="Coffee Type">@context.ProductName</MudTd>
-            <MudTd DataLabel="Quantity">@GetQuantity(@context.ProductName)</MudTd>
-            <MudTd DataLabel="Revenue">@GetRevenue(@context.ProductName)</MudTd>
+            <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+            <MudTd DataLabel="Revenue">@context.Revenue</MudTd>
         </RowTemplate>
     </MudTable>
 }
 else
 {
-    <MudTable Elevation="0" Items="@CoffeeAddonsElements" ...>
+    <MudTable Elevation="0" Items="@SummedCoffeeAddonsElements">
         <!-- Add your Coffee Add-ons table properties here -->
         <!-- Coffee Add-ons table columns: ID, Coffee Add-ons, Quantity, Revenue -->
         <HeaderContent>
@@ -44,8 +44,8 @@ else
             <!-- Add MudTd for each column -->
             <MudTd DataLabel="ID">@context.Id</MudTd>
             <MudTd DataLabel="Coffee Add-ons">@context.ProductName</MudTd>
-            <MudTd DataLabel="Quantity">@GetQuantity(@context.ProductName)</MudTd>
-            <MudTd DataLabel="Revenue">@GetRevenue(@context.ProductName)</MudTd>
+            <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+            <MudTd DataLabel="Revenue">@context.Revenue</MudTd>
         </RowTemplate>
     </MudTable>
 }

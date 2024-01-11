@@ -30,6 +30,7 @@ public partial class Products
         {
             SetAppBarTitle.Invoke("Manage Products");
             Elements = ProductRepository.GetAll();
+            
             if (!AuthService.IsUserAdmin())
             {
                 ReadOnly = true;

@@ -18,6 +18,7 @@ public partial class Transactions
     private readonly TableEditButtonPosition EditButtonPosition = TableEditButtonPosition.End;
     private readonly TableEditTrigger EditTrigger = TableEditTrigger.RowClick;
     private IEnumerable<Transaction> Elements;
+    private readonly Dictionary<Guid, bool> ProductDescTracks = new();
 
     [CascadingParameter]
     private Action<string> SetAppBarTitle { get; set; }
@@ -81,5 +82,6 @@ public partial class Transactions
                || element.Quantity.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Discount.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
     }
+
 
 }

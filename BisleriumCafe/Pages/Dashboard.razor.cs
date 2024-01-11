@@ -18,49 +18,49 @@ public partial class Dashboard
             Size = 16
         };
 
-        Config = new BarChartConfig()
-        {
-            Options = new Options()
+            Config = new BarChartConfig()
             {
-                Responsive = true,
-                Plugins = new Plugins()
+                Options = new Options()
                 {
-                    Crosshair = new Crosshair()
+                    Responsive = true,
+                    Plugins = new Plugins()
                     {
-                        Horizontal = new CrosshairLine()
+                        Crosshair = new Crosshair()
                         {
-                            Color = "rgb(255, 99, 132)"
-                        }
-                    },
-                    Zoom = new Zoom()
-                    {
-                        Enabled = true,
-                        Mode = "xy",
-                        ZoomOptions = new ZoomOptions()
-                        {
-                            Wheel = new Wheel()
+                            Horizontal = new CrosshairLine()
                             {
-                                Enabled = true
-                            },
-                            Pinch = new Pinch()
-                            {
-                                Enabled = true
-                            },
-                        }
-                    },
-                    Title = new Title()
-                    {
-                        Text = "Inventory Items",
-                        Display = true,
-                        Font = new PSC.Blazor.Components.Chartjs.Models.Common.Font()
-                        {
-                            Weight = "bold",
-                            Size = 20
+                                Color = "rgb(255, 99, 132)"
+                            }
                         },
-                        Position = PSC.Blazor.Components.Chartjs.Models.Common.Position.Top
+                        Zoom = new Zoom()
+                        {
+                            Enabled = true,
+                            Mode = "xy",
+                            ZoomOptions = new ZoomOptions()
+                            {
+                                Wheel = new Wheel()
+                                {
+                                    Enabled = true
+                                },
+                                Pinch = new Pinch()
+                                {
+                                    Enabled = true
+                                },
+                            }
+                        },
+                        Title = new Title()
+                        {
+                            Text = "Inventory Items",
+                            Display = true,
+                            Font = new PSC.Blazor.Components.Chartjs.Models.Common.Font()
+                            {
+                                Weight = "bold",
+                                Size = 20
+                            },
+                            Position = PSC.Blazor.Components.Chartjs.Models.Common.Position.Top
+                        },
                     },
-                },
-                Scales = new Dictionary<string, Axis>()
+                    Scales = new Dictionary<string, Axis>()
                 {
                     {
                         Scales.XAxisId, new Axis()
@@ -94,8 +94,9 @@ public partial class Dashboard
                         }
                     }
                 }
-            }
-        };
+                }
+
+    };
 
         BarDataset ApprovedDeductionQuantitySet = new()
         {
@@ -125,27 +126,24 @@ public partial class Dashboard
             Label = "Disapproved Deduction",
         };
 
+        // Fetch data from ProductRepository and TransactionRepository
+        var products = ProductRepository.GetAll();
+        var transactions = TransactionRepository.GetAll();
 
-        foreach (IGrouping<Guid, Data.Models.ActivityLog> group in ActivityLogRepository.GetAll().GroupBy(x => x.SpareID).ToList())
+        foreach (var product in products)
         {
-            Data.Models.Spare spare = SpareRepository.Get(x => x.Id, group.Key);
-            if (spare is null)
-            {
-                continue;
-            }
+            var deductedStock = transactions.Where(x => x.ProductName == product.Name && x.Quantity > 0).ToList();
+            int approved = deductedStock.Where(x => x.Discount == "Approve").Sum(x => x.Quantity);
+            int pending = deductedStock.Where(x => x.Discount == "Pending").Sum(x => x.Quantity);
+            int disapproved = deductedStock.Where(x => x.Discount == "Disapprove").Sum(x => x.Quantity);
 
-            List<Data.Models.ActivityLog> deductedStock = group.Where(x => x.Action == Data.Enums.StockAction.Deduct).ToList();
-            int approved = deductedStock.Where(x => x.ApprovalStatus == Data.Enums.ApprovalStatus.Approve).Sum(x => x.Quantity);
-            int pending = deductedStock.Where(x => x.ApprovalStatus == Data.Enums.ApprovalStatus.Pending).Sum(x => x.Quantity);
-            int disapproved = deductedStock.Where(x => x.ApprovalStatus == Data.Enums.ApprovalStatus.Disapprove).Sum(x => x.Quantity);
-
-            Config.Data.Labels.Add(spare.Name);
+            Config.Data.Labels.Add(product.Name);
 
             ApprovedDeductionQuantitySet.Data.Add(approved);
             PendingDeductionQuantitySet.Data.Add(pending);
             DisapprovedDeductionQuantitySet.Data.Add(disapproved);
 
-            AvailableQuantitySet.Data.Add(spare.AvailableQuantity);
+            AvailableQuantitySet.Data.Add(product.AvailableQuantity);
         }
 
         Config.Data.Datasets.Add(ApprovedDeductionQuantitySet);
