@@ -108,6 +108,10 @@ namespace BisleriumCafe.Pages
                     // Clear the shopping cart after processing
                     ShoppingCart.Clear();
 
+                    isRegular=false;
+                    MemberFound=false;
+                    MemberInput = "";
+
                     Snackbar.Add("Checkout successful.", Severity.Success);
                 }
             }

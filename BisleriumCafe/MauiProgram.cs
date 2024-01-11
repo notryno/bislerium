@@ -1,5 +1,6 @@
 ﻿using BisleriumCafe;
 using MudBlazor.Services;
+using QuestPDF.Infrastructure;
 
 namespace BisleriumCafe;
 
@@ -19,6 +20,7 @@ public static class MauiProgram
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
+        QuestPDF.Settings.License = LicenseType.Community;
 #endif
 
         builder.Services.AddMudServices(config =>
@@ -32,6 +34,9 @@ public static class MauiProgram
 
         //builder.Services.AddCsvFileProvider();
         //builder.Services.AddExcelFileProvider();
+
+        QuestPDF.Settings.License = LicenseType.Community;
+
         builder.Services.AddJsonFileProvider();
 
         builder.Services.AddRepository();

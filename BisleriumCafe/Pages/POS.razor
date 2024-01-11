@@ -23,7 +23,7 @@
                             <MudCard Class="product-card" @onclick="() => AddToCart(product)" style="transition: background-color 0.3s; cursor: pointer;">
                                 <MudCardContent>
                                     <MudText Typo="Typo.h6">@product.Name</MudText>
-                                    <MudText Typo="Typo.subtitle2">Price: Rs. @product.Price</MudText>
+                                    <MudText Typo="Typo.subtitle2">Price: NPR @product.Price</MudText>
                                 </MudCardContent>
                             </MudCard>
                         </MudItem>
@@ -32,6 +32,7 @@
             </MudGrid>
             <hr />
         </MudItem>
+        <MudDivider Orientation="Orientation.Vertical" Class="vertical-line" />
 
         <!-- Add-Ons Section -->
         <MudItem xs="12" md="8">
@@ -47,7 +48,7 @@
                             <MudCard Class="product-card" @onclick="() => AddToCart(product)" style="transition: background-color 0.3s; cursor: pointer;">
                                 <MudCardContent>
                                     <MudText Typo="Typo.h6">@product.Name</MudText>
-                                    <MudText Typo="Typo.subtitle2">Price: Rs. @product.Price</MudText>
+                                    <MudText Typo="Typo.subtitle2">Price: NPR @product.Price</MudText>
                                 </MudCardContent>
                             </MudCard>
                         </MudItem>
@@ -58,47 +59,94 @@
         </MudItem>
 
         <!-- Shopping Cart Column -->
-        <MudItem xs="12" md="4">
-            <MudPaper style="padding: 16px; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Class="shopping-cart">
-                <MudText Typo="Typo.h5">Shopping Cart</MudText>
+        <MudItem xs="12" md="4" Class="fixed-cart">
+            <MudPaper style="padding: 20px; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" Class="shopping-cart">
+                <MudText Typo="Typo.h4" Style="padding-bottom:40px">Shopping Cart</MudText>
                 <ul>
                     @foreach (var cartItem in ShoppingCart)
                     {
                         <li>
-                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Secondary" OnClick="() => DecreaseQuantity(cartItem)">-</MudIconButton>
-                            @cartItem.Product.Name - Rs. @cartItem.Product.Price - Quantity: @cartItem.Quantity
-                            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="() => IncreaseQuantity(cartItem)">+</MudIconButton>
+                            <MudGrid AlignItems="AlignItems.Center">
+                                <MudItem xs="8">
+                                    <MudText Typo="Typo.h6">@cartItem.Product.Name</MudText>
+                                    <MudText Typo="Typo.body1">NPR @cartItem.Product.Price</MudText>
+                                </MudItem>
+                                <MudItem xs="4" Class="text-right">
+                                    <div style="display: flex; align-items: center; justify-content: space-around;">
+                                        <div style="background-color: white; border-radius: 50%; border: 1px solid black; padding: 2px; margin:10px">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Remove" OnClick="() => DecreaseQuantity(cartItem)" Class="icon-button"></MudIconButton>
+                                        </div>
+                                        <MudText Typo="Typo.h6">@cartItem.Quantity</MudText>
+                                        <div style="background-color: white; border-radius: 50%; border: 1px solid black; padding: 2px; margin: 10px">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="() => IncreaseQuantity(cartItem)" Class="icon-button"></MudIconButton>
+                                        </div>
+                                    </div>
+                                </MudItem>
+                            </MudGrid>
                         </li>
                     }
                 </ul>
 
 
+                <MudDivider Orientation="Orientation.Vertical" Class="vertical-line" />
 
                 <!-- Check if the member is found and regular -->
                 @if (FoundMember != null)
                 {
                     if (isRegular)
                     {
-                        <MudText Typo="Typo.body1" Class="mt-2">Subtotal: <span class="h6">Rs. @CalculateTotal()</span></MudText>
-                        <MudText Typo="Typo.body1" Class="mt-2">Discount: - <span class="h6">Rs. @CalculateRegularCustomerDiscount()</span></MudText>
+                        <MudGrid AlignItems="AlignItems.Center">
+                            <!-- Subtotal -->
+                            <MudItem xs="10" md="6">
+                                <MudText Typo="Typo.body1" Class="mt-2">Subtotal:</MudText>
+                            </MudItem>
+                            <MudItem xs="10" Class="text-right" md="4">
+                                <MudText Typo="Typo.h6">@CalculateTotal()</MudText>
+                            </MudItem>
+
+                            <!-- Discount -->
+                            <MudItem xs="10" md="6">
+                                <MudText Typo="Typo.body1" Class="mt-2">Discount:</MudText>
+                            </MudItem>
+                            <MudItem xs="10" md="4" Class="text-right">
+                                <MudText Typo="Typo.h6">- NPR @CalculateRegularCustomerDiscount()</MudText>
+                            </MudItem>
+                        </MudGrid>
 
                     }
                     <!-- Horizontal line -->
-                    <hr class="mt-2 mb-2" />
-                    <MudText Typo="Typo.h5">
-                        Total:
-                        <span class="h6">
-                            Rs. @(isRegular ? CalculateTotalWithDiscount() : CalculateTotal())
-                        </span>
-                    </MudText>
+                    <MudDivider Orientation="Orientation.Vertical" Class="vertical-line" />
+                    <MudGrid AlignItems="AlignItems.Center">
+                        <MudItem xs="10" md="6">
+                            <MudText Typo="Typo.body1" Style="margin-bottom:10px">
+                                Total:
+                            </MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudText Typo="Typo.h6">
+                                NPR @(isRegular ? CalculateTotalWithDiscount() : CalculateTotal())
+                            </MudText>
+
+                        </MudItem>
+
+                    </MudGrid>
 
                 }
                 else
                 {
                     <!-- Horizontal line -->
                     <hr class="mt-2 mb-2" />
-                    <MudText Typo="Typo.h5">Total: <span class="h6">Rs. @CalculateTotal()</span></MudText>
-                }
+                    <MudGrid AlignItems="AlignItems.Center">
+                        <MudItem xs="10" md="6">
+                            <MudText Typo="Typo.body1" Style="margin-bottom:10px">
+                                Total:
+                                </MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudText Typo="Typo.h6">NPR @CalculateTotal()</MudText>
+                        </MudItem>
+                    </MudGrid>
+                        }
 
 
 
@@ -107,8 +155,8 @@
                 @if (!MemberFound)
                 {
                     <!-- Text input for member username or phone number -->
-                    <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" />
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember">Search Member</MudButton>
+                    <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" Style="margin-top:30px"/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember" Class="button">Search Member</MudButton>
                 }
 
                 <!-- Show the found member information if a member is found -->
@@ -119,10 +167,10 @@
 
                     <!-- Show the full member name below the text box -->
                     <MudText Typo="Typo.body1">Full Name: @FoundMember.FullName</MudText>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ClearMember">Clear Member</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ClearMember" Class="button">Clear Member</MudButton>
                 }
 
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout">Checkout</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout" Class="button">Checkout</MudButton>
             </MudPaper>
         </MudItem>
 
@@ -148,11 +196,25 @@
         justify-content: center; /* Vertically center the content */
     }
 
-        .product-card:hover {
-            opacity: 0.8;
-        }
+    .product-card:hover {
+        opacity: 0.8;
+    }
 
-        .product-card:active {
-            opacity: 0.5;
-        }
+    .product-card:active {
+        opacity: 0.5;
+    }
+
+    .fixed-cart {
+        position: fixed;
+        top: 100px;
+        right: 100px;
+        width: 500px;
+        height: 1000px;
+        z-index: 1000; /* Adjust z-index as needed */
+    }
+
+    .button {
+        margin: 10px;
+    }
+
 </style>

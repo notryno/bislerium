@@ -18,49 +18,49 @@ public partial class Dashboard
             Size = 16
         };
 
-            Config = new BarChartConfig()
+        Config = new BarChartConfig()
+        {
+            Options = new Options()
             {
-                Options = new Options()
+                Responsive = true,
+                Plugins = new Plugins()
                 {
-                    Responsive = true,
-                    Plugins = new Plugins()
+                    Crosshair = new Crosshair()
                     {
-                        Crosshair = new Crosshair()
+                        Horizontal = new CrosshairLine()
                         {
-                            Horizontal = new CrosshairLine()
-                            {
-                                Color = "rgb(255, 99, 132)"
-                            }
-                        },
-                        Zoom = new Zoom()
-                        {
-                            Enabled = true,
-                            Mode = "xy",
-                            ZoomOptions = new ZoomOptions()
-                            {
-                                Wheel = new Wheel()
-                                {
-                                    Enabled = true
-                                },
-                                Pinch = new Pinch()
-                                {
-                                    Enabled = true
-                                },
-                            }
-                        },
-                        Title = new Title()
-                        {
-                            Text = "Inventory Items",
-                            Display = true,
-                            Font = new PSC.Blazor.Components.Chartjs.Models.Common.Font()
-                            {
-                                Weight = "bold",
-                                Size = 20
-                            },
-                            Position = PSC.Blazor.Components.Chartjs.Models.Common.Position.Top
-                        },
+                            Color = "rgb(255, 99, 132)"
+                        }
                     },
-                    Scales = new Dictionary<string, Axis>()
+                    Zoom = new Zoom()
+                    {
+                        Enabled = true,
+                        Mode = "xy",
+                        ZoomOptions = new ZoomOptions()
+                        {
+                            Wheel = new Wheel()
+                            {
+                                Enabled = true
+                            },
+                            Pinch = new Pinch()
+                            {
+                                Enabled = true
+                            },
+                        }
+                    },
+                    Title = new Title()
+                    {
+                        Text = "Transaction Quantities",
+                        Display = true,
+                        Font = new PSC.Blazor.Components.Chartjs.Models.Common.Font()
+                        {
+                            Weight = "bold",
+                            Size = 20
+                        },
+                        Position = PSC.Blazor.Components.Chartjs.Models.Common.Position.Top
+                    },
+                },
+                Scales = new Dictionary<string, Axis>()
                 {
                     {
                         Scales.XAxisId, new Axis()
@@ -73,9 +73,9 @@ public partial class Dashboard
                             },
                             Title = new AxesTitle()
                             {
-                                Text = "Spares",
+                                Text = "Products",
                                 Display = true,
-                                Align= PSC.Blazor.Components.Chartjs.Models.Common.Align.Center,
+                                Align = PSC.Blazor.Components.Chartjs.Models.Common.Align.Center,
                                 Font = axisLabelFont
                             },
                         }
@@ -88,67 +88,62 @@ public partial class Dashboard
                             {
                                 Text = "Quantity",
                                 Display = true,
-                                Align= PSC.Blazor.Components.Chartjs.Models.Common.Align.Center,
+                                Align = PSC.Blazor.Components.Chartjs.Models.Common.Align.Center,
                                 Font = axisLabelFont
                             },
                         }
                     }
                 }
-                }
+            }
+        };
 
-    };
-
-        BarDataset ApprovedDeductionQuantitySet = new()
+        BarDataset coffeeQuantitySet = new()
         {
             Data = new List<decimal?>(),
             BackgroundColor = new() { "rgb(0, 163, 68)" },
-            Label = "Approved Deduction (Taken Out)",
+            Label = "Coffee",
         };
 
-        BarDataset AvailableQuantitySet = new()
-        {
-            Data = new List<decimal?>(),
-            BackgroundColor = new() { "rgb(111, 83, 255)" },
-            Label = "Available"
-        };
-
-        BarDataset PendingDeductionQuantitySet = new()
+        BarDataset addonQuantitySet = new()
         {
             Data = new List<decimal?>(),
             BackgroundColor = new() { "rgb(252, 152, 0)" },
-            Label = "Pending Deduction (On Hold)"
+            Label = "Add-Ons"
         };
 
-        BarDataset DisapprovedDeductionQuantitySet = new()
-        {
-            Data = new List<decimal?>(),
-            BackgroundColor = new() { "rgb(255, 45, 13)" },
-            Label = "Disapproved Deduction",
-        };
 
-        // Fetch data from ProductRepository and TransactionRepository
-        var products = ProductRepository.GetAll();
+        // Fetch data from TransactionRepository
         var transactions = TransactionRepository.GetAll();
 
-        foreach (var product in products)
+        var productNames = transactions.Select(x => x.ProductName).Distinct();
+
+        foreach (var productName in productNames)
         {
-            var deductedStock = transactions.Where(x => x.ProductName == product.Name && x.Quantity > 0).ToList();
-            int approved = deductedStock.Where(x => x.Discount == "Approve").Sum(x => x.Quantity);
-            int pending = deductedStock.Where(x => x.Discount == "Pending").Sum(x => x.Quantity);
-            int disapproved = deductedStock.Where(x => x.Discount == "Disapprove").Sum(x => x.Quantity);
+            var productTransactions = transactions
+                .Where(x => x.ProductName == productName && x.Quantity > 0)
+                .ToList();
 
-            Config.Data.Labels.Add(product.Name);
+            // Sum of quantities for each product
+            int totalQuantity = productTransactions.Sum(x => x.Quantity);
 
-            ApprovedDeductionQuantitySet.Data.Add(approved);
-            PendingDeductionQuantitySet.Data.Add(pending);
-            DisapprovedDeductionQuantitySet.Data.Add(disapproved);
+            Config.Data.Labels.Add(productName);
 
-            AvailableQuantitySet.Data.Add(product.AvailableQuantity);
+            // Check the ProductType to distinguish between Coffee and Add-Ons
+            var productType = productTransactions.First().ProductType;
+
+            if (productType == ProductType.Coffee)
+            {
+                coffeeQuantitySet.Data.Add(totalQuantity);
+                addonQuantitySet.Data.Add(null); // Add null for Add-Ons to maintain dataset alignment
+            }
+            else if (productType == ProductType.AddOn)
+            {
+                addonQuantitySet.Data.Add(totalQuantity);
+                coffeeQuantitySet.Data.Add(null); // Add null for Coffee to maintain dataset alignment
+            }
         }
 
-        Config.Data.Datasets.Add(ApprovedDeductionQuantitySet);
-        Config.Data.Datasets.Add(PendingDeductionQuantitySet);
-        Config.Data.Datasets.Add(AvailableQuantitySet);
-        Config.Data.Datasets.Add(DisapprovedDeductionQuantitySet);
+        Config.Data.Datasets.Add(coffeeQuantitySet);
+        Config.Data.Datasets.Add(addonQuantitySet);
     }
 }

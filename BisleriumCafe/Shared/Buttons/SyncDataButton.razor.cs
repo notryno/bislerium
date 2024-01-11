@@ -17,6 +17,7 @@ public partial class SyncDataButton
         await ProductRepository.FlushAsync();
         await MemberRepository.FlushAsync();
         await ActivityLogRepository.FlushAsync();
+        await TransactionRepository.FlushAsync();
         IsSaving = false;
 
         Snackbar.Add("All Data Synced!", Severity.Success);
