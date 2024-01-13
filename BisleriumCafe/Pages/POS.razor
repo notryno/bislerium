@@ -140,13 +140,13 @@
                         <MudItem xs="10" md="6">
                             <MudText Typo="Typo.body1" Style="margin-bottom:10px">
                                 Total:
-                                </MudText>
+                            </MudText>
                         </MudItem>
                         <MudItem>
                             <MudText Typo="Typo.h6">NPR @CalculateTotal()</MudText>
                         </MudItem>
                     </MudGrid>
-                        }
+                }
 
 
 
@@ -155,7 +155,7 @@
                 @if (!MemberFound)
                 {
                     <!-- Text input for member username or phone number -->
-                    <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" Style="margin-top:30px"/>
+                    <MudTextField Label="Member Username or Phone" @bind-Value="MemberInput" Style="margin-top:30px" />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchMember" Class="button">Search Member</MudButton>
                 }
 
@@ -168,6 +168,17 @@
                     <!-- Show the full member name below the text box -->
                     <MudText Typo="Typo.body1">Full Name: @FoundMember.FullName</MudText>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ClearMember" Class="button">Clear Member</MudButton>
+
+                    @if (FoundMember.FreeCoffeeRedemptionCount > 0)
+                    {
+                        <!-- Display the numeric field for quantity -->
+                        <MudNumericField Label="Free Drink Redemption Quantity" @bind-Value="RedemptionQuantity" Min="1" Max="@FoundMember.FreeCoffeeRedemptionCount" />
+
+                        <MudText Typo="Typo.body1">Number of Free Redemption Drinks: @FoundMember.FreeCoffeeRedemptionCount</MudText>
+
+                        <!-- Display the button for free coffee redemption -->
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RedeemFreeCoffee" Class="button">Redeem Free Coffee</MudButton>
+                    }
                 }
 
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Checkout" Class="button">Checkout</MudButton>

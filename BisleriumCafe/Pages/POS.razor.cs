@@ -11,7 +11,8 @@ namespace BisleriumCafe.Pages
         private List<CartItem> ShoppingCart = new List<CartItem>();
         private Member FoundMember;
         private bool isRegular;
-        private bool MemberFound=false;
+        private bool MemberFound = false;
+        private int RedemptionQuantity = 1;
 
         [CascadingParameter]
         private Action<string> SetAppBarTitle { get; set; }
@@ -48,7 +49,8 @@ namespace BisleriumCafe.Pages
             // Check if the cart is not empty
             if (ShoppingCart.Count > 0)
             {
-                if(AtleastOneCoffee()){
+                if (AtleastOneCoffee())
+                {
                     decimal totalDiscount = 0;
 
                     // Iterate through cart items
@@ -75,6 +77,14 @@ namespace BisleriumCafe.Pages
 
                                     // Accumulate the discount for the entire cart
                                     totalDiscount += discountAmount;
+
+                                    // Create a transaction for the cart item
+                                    CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.1m);
+                                }
+                                else
+                                {
+                                    // Create a transaction for the cart item without a discount
+                                    CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.0m);
                                 }
 
                                 // Calculate the number of complimentary drinks earned
@@ -92,19 +102,25 @@ namespace BisleriumCafe.Pages
                                     FoundMember.PurchasesCount -= complimentaryDrinks * 10;
                                 }
                             }
+                            else
+                            {
+                                // Create a transaction for the cart item
+                                CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.0m);
+                            }
 
-                            // Create a transaction for the cart item
-                            CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
+
+
 
                             // Update the member in the repository
                             if (FoundMember != null)
                             {
                                 MemberRepository.Update(FoundMember);
                             }
-                        } else
+                        }
+                        else
                         {
                             // Create a transaction for the cart item
-                            CreateTransaction(cartItem, FoundMember?.UserName ?? "-");
+                            CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.0m);
 
                         }
                     }
@@ -112,8 +128,8 @@ namespace BisleriumCafe.Pages
                     // Clear the shopping cart after processing
                     ShoppingCart.Clear();
 
-                    isRegular=false;
-                    MemberFound=false;
+                    isRegular = false;
+                    MemberFound = false;
                     MemberInput = "";
 
                     Snackbar.Add("Checkout successful.", Severity.Success);
@@ -125,7 +141,7 @@ namespace BisleriumCafe.Pages
             }
         }
 
-        private void CreateTransaction(CartItem cartItem, string memberUsername)
+        private void CreateTransaction(CartItem cartItem, string memberUsername, decimal discountPercentage)
         {
             // Create a Transaction object
             var transaction = new Transaction
@@ -135,7 +151,7 @@ namespace BisleriumCafe.Pages
                 ProductName = cartItem.Product.Name,
                 ProductType = cartItem.Product.ProductType,
                 Quantity = cartItem.Quantity,
-                Discount = isRegular ? "10%" : "-", // Default discount for members, adjust as needed
+                Discount = discountPercentage > 0.0m ? $"{discountPercentage * 100}%" : "-",
             };
 
             // Add the transaction to the repository
@@ -447,6 +463,126 @@ namespace BisleriumCafe.Pages
 
             return atleast;
         }
+
+        private void RedeemFreeCoffee()
+        {
+            try
+            {
+
+                decimal totalDiscount = 0.0m;
+
+                // Check if the inputted quantity is valid
+                if (RedemptionQuantity > 0 && RedemptionQuantity <= FoundMember.FreeCoffeeRedemptionCount)
+                {
+                    // Check the number of "Coffee" products in the cart
+                    int coffeeCountInCart = ShoppingCart.Where(cartItem =>
+         cartItem.Product.ProductType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
+         .Sum(cartItem => cartItem.Quantity);
+
+                    // Check if the inputted quantity is less than or equal to the number of "Coffee" products in the cart
+                    if (RedemptionQuantity <= coffeeCountInCart)
+                    {
+                        int oldCount = RedemptionQuantity;
+
+                        var cartCopy = new List<CartItem>(ShoppingCart);
+                        // Iterate through cart items
+                        foreach (var cartItem in cartCopy)
+                        {
+                            // Check if the product type is "coffee"
+                            if (cartItem.Product.ProductType.ToString().Equals("coffee", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Apply a 100% discount for the specified quantity of free coffee
+                                if (RedemptionQuantity > 0)
+                                {
+                                    decimal discountPercentage = 1.0m; // 100% discount
+                                    int oldCart = cartItem.Quantity;
+                                    cartItem.Quantity = RedemptionQuantity;
+                                    CreateTransaction(cartItem, FoundMember?.UserName ?? "-", discountPercentage);
+                                    cartItem.Quantity = oldCart - RedemptionQuantity;
+                                    RedemptionQuantity = 0; // Reset RedemptionQuantity after applying the discount
+                                }
+                                if (cartItem.Quantity <= 0)
+                                {
+                                    // If quantity is 1 or less, remove the item from the cart
+                                    ShoppingCart.Remove(cartItem);
+
+                                }
+                            }
+                            else
+                            {
+                                // For other coffee products, apply the regular discount logic
+                                if (FoundMember.IsRegularCustomer)
+                                {
+                                    decimal discountAmount = CalculateDiscount(cartItem.Product.Price, 0.1m); // 10% 
+
+                                    CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.1m);
+
+                                    totalDiscount += discountAmount;
+
+                                    cartItem.Quantity = 0;
+                                    ShoppingCart.Remove(cartItem);
+
+
+                                }
+
+                                else
+                                {
+                                    CreateTransaction(cartItem, FoundMember?.UserName ?? "-", 0.0m);
+                                }
+                            }
+
+                        }
+
+                        // Update the FreeCoffeeRedemptionCount
+                        FoundMember.FreeCoffeeRedemptionCount -= oldCount;
+
+                        Snackbar.Add($"FreeCount: {FoundMember.FreeCoffeeRedemptionCount}");
+
+                        // Update the member in the repository
+                        if (FoundMember != null)
+                        {
+                            MemberRepository.Update(FoundMember);
+                        }
+
+
+
+                        // Display success message
+                        Snackbar.Add($"Successfully redeemed {RedemptionQuantity} free coffee(s).", Severity.Success);
+
+                        // Clear the RedemptionQuantity after processing
+                        RedemptionQuantity = 1;
+
+                        SearchMember();
+
+                        if (coffeeCountInCart == oldCount)
+                        {
+                            // Clear the shopping cart after processing
+                            ShoppingCart.Clear();
+
+                            isRegular = false;
+                            MemberFound = false;
+                            MemberInput = "";
+                        }
+                    }
+                    else
+                    {
+                        // Display error message if the inputted quantity exceeds the number of "Coffee" products in the cart
+                        Snackbar.Add("Cannot redeem more free coffee than the number of 'Coffee' products in the cart.", Severity.Error);
+                    }
+                }
+                else
+                {
+                    // Display error message if the inputted quantity is invalid
+                    Snackbar.Add("Invalid quantity for free coffee redemption.", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex}", severity: Severity.Error);
+            }
+        }
+
+
 
     }
 
