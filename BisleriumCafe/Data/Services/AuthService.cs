@@ -41,7 +41,7 @@ internal class AuthService
         return username;
     }
 
-    public void Register(string username, string email, string fullname, UserRole role)
+    public void Register(string username, string email, string fullname, UserRole role, string password)
     {
         if (_userRepository.HasUserName(username))
         {
@@ -53,7 +53,7 @@ internal class AuthService
             UserName = username,
             Email = email,
             FullName = fullname,
-            PasswordHash = Hasher.HashSecret(username),
+            PasswordHash = Hasher.HashSecret(password),
             Role = role,
             CreatedBy = CurrentUser.Id,
         };

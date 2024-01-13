@@ -6,6 +6,7 @@
     <DialogContent>
         <MudForm @ref="form">
             <MudTextField T="string" @bind-Value="@UserName" Label="Username" Required="true" Validation="@(new Func<string, IEnumerable<string>>(UserNameValidation))" />
+            <MudTextField T="string" Label="Password" @bind-Value="@Password" Required="true" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
             <MudTextField T="string" @bind-Value="@Email" Label="Email" Required="true" RequiredError="Email is required!"
                           Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
             <MudTextField T="string" @bind-Value="@FullName" Label="Fullname" Required="true" RequiredError="Fullname is required!" />
@@ -14,7 +15,7 @@
                     <MudRadio Option="@("Admin")">Admin</MudRadio>
                     <MudRadio Option="@("Staff")">Staff</MudRadio>
                 </MudRadioGroup>
-            </div>            
+            </div>
         </MudForm>
     </DialogContent>
     <DialogActions>

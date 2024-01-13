@@ -47,14 +47,19 @@ public partial class AddMemberDialog
 
     private IEnumerable<string> UserNameValidation(string arg)
     {
-        // Validation logic for username
-        // You can customize this based on your requirements
         if (string.IsNullOrWhiteSpace(arg))
         {
             yield return "Username is required!";
             yield break;
         }
-        // Add more validation rules as needed
+        if (!Regex.Match(arg, @"^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$").Success)
+        {
+            yield return "Invalid Username";
+        }
+        if (MemberRepository.HasMemberUserName(arg))
+        {
+            yield return "Username already Exist!";
+        }
     }
 
     private IEnumerable<string> PhoneValidation(string arg)

@@ -11,6 +11,7 @@ public partial class AddUserDialog
     private string Email;
     private string FullName;
     private string Role;
+    private string Password;
 
 
     private void Cancel()
@@ -23,7 +24,7 @@ public partial class AddUserDialog
         await form.Validate();
         if (form.IsValid)
         {
-            AuthService.Register(UserName, Email, FullName, Enum.Parse<UserRole>(Role));
+            AuthService.Register(UserName, Email, FullName, Enum.Parse<UserRole>(Role), Password);
             ChangeParentState.Invoke();
 
             Snackbar.Add($"User {UserName} is Added!", Severity.Success);
@@ -45,6 +46,26 @@ public partial class AddUserDialog
         if (UserRepository.HasUserName(arg))
         {
             yield return "Username already Exist!";
+        }
+    }
+
+    private bool isShow;
+    private InputType PasswordInput = InputType.Password;
+    private string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    private void ButtonTestclick()
+    {
+        if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
         }
     }
 }
