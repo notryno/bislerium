@@ -11,10 +11,10 @@
 @inject IDialogService DialogService;
 
 
-<MudContainer Fluid="true">
+<MudContainer Fluid="true" MaxWidth="MaxWidth.ExtraLarge">
     <MudGrid>
         <MudItem xs="12">
-            <MudText Typo="Typo.h3" Class="section-header">Top Five Coffee Transactions</MudText>
+            <MudText Typo="Typo.h3" Class="section-header mb-4">Top Five Coffee Transactions</MudText>
             <MudTable Elevation="0"
                       Items="@((selectedCoffeePeriod == "Monthly") ? Top5CoffeeData : Top5CoffeeDataDaily)"
                       FixedHeader="true"
@@ -63,7 +63,6 @@
                     <col />
                 </ColGroup>
                 <HeaderContent>
-                    <!-- ... (existing headers) ... -->
                     <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x=>x.ProductID)">ID</MudTableSortLabel></MudTh>
                     <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x => x.ProductName)">Product Name</MudTableSortLabel></MudTh>
                     <MudTh Style="white-space: nowrap;">Description</MudTh>
@@ -72,7 +71,6 @@
 
                 </HeaderContent>
                 <RowTemplate>
-                    <!-- ... (existing row template) ... -->
                     <MudTd DataLabel="ID">
                         <MudChip>@context.ProductID</MudChip>
                     </MudTd>
@@ -99,7 +97,7 @@
         </MudItem>
 
         <MudItem xs="12" Class="mt-4">
-            <MudText Typo="Typo.h3" Class="section-header">Top Five Add-Ons Transactions</MudText>
+            <MudText Typo="Typo.h3" Class="section-header mb-4">Top Five Add-Ons Transactions</MudText>
             <MudTable Elevation="0"
                       Items="@((selectedAddOnPeriod == "Monthly") ? Top5AddOnData : Top5AddOnDataDaily)"
                       FixedHeader="true"
