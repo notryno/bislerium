@@ -70,7 +70,7 @@ public partial class Products
             ((Product)element).Description = ElementBeforeEdit.Description;
             ((Product)element).ProductType = ElementBeforeEdit.ProductType; //Ryan
             ((Product)element).Price = ElementBeforeEdit.Price;
-            ((Product)element).AvailableQuantity = ElementBeforeEdit.AvailableQuantity;
+            //((Product)element).AvailableQuantity = ElementBeforeEdit.AvailableQuantity;
         }
         catch (Exception ex)
         {
@@ -85,8 +85,8 @@ public partial class Products
                || element.Name.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.Description.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
                || element.ProductType.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase) //Ryan
-               || element.Price.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
-               || element.AvailableQuantity.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
+               || element.Price.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
+               //|| element.AvailableQuantity.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase);
     }
 
     private void ShowBtnPress(Guid id)
@@ -114,27 +114,27 @@ public partial class Products
         await DialogService.ShowAsync<AddProductDialog>("Add Product", parameters); //Ryan
     }
 
-    private async Task ActOnStock(Product product, StockAction action)
-    {
-        if (action == StockAction.Deduct)
-        {
-            //if (!ApproveButton.ValidateWeekAndTime(Snackbar))
-            //{
-            //    return;
-            //}
+    //private async Task ActOnStock(Product product, StockAction action)
+    //{
+    //    if (action == StockAction.Deduct)
+    //    {
+    //        //if (!ApproveButton.ValidateWeekAndTime(Snackbar))
+    //        //{
+    //        //    return;
+    //        //}
 
-            if (product.AvailableQuantity == 0)
-            {
-                Snackbar.Add("Out of Stock!", Severity.Error);
-                return;
-            }
-        }
-        DialogParameters parameters = new()
-        {
-            { "StockAction", action },
-            { "Product",  product},
-            { "ChangeParentState", new Action(StateHasChanged) }
-        };
-        await DialogService.ShowAsync<StockActionDialog>($"{Enum.GetName(action)} Stock", parameters);
-    }
+    //        if (product.AvailableQuantity == 0)
+    //        {
+    //            Snackbar.Add("Out of Stock!", Severity.Error);
+    //            return;
+    //        }
+    //    }
+    //    DialogParameters parameters = new()
+    //    {
+    //        { "StockAction", action },
+    //        { "Product",  product},
+    //        { "ChangeParentState", new Action(StateHasChanged) }
+    //    };
+    //    await DialogService.ShowAsync<StockActionDialog>($"{Enum.GetName(action)} Stock", parameters);
+    //}
 }

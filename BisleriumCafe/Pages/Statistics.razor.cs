@@ -21,18 +21,20 @@ namespace BisleriumCafe.Pages
 		private readonly bool Fixed_footer = true;
 		private readonly bool Hover = true;
 		private readonly bool ReadOnly = false;
+        private string SearchString;
 
-		private int monthNumber = DateTime.Now.Month;
+        private int monthNumber = DateTime.Now.Month;
 
 		private Action<string> SetAppBarTitle { get; set; }
 		private IEnumerable<TopCoffeeData> Top5CoffeeData;
-		private IEnumerable<TopAddInData> Top5AddInData;
+		private IEnumerable<TopAddOnData> Top5AddOnData;
+        private readonly Dictionary<Guid, bool> CoffeeDescTracks = new();
 
-		protected sealed override void OnInitialized()
+        protected sealed override void OnInitialized()
 		{
-			//SetAppBarTitle.Invoke("Top 5 Coffee Sales");
-			LoadTop5CoffeeData();
-			LoadTop5AddinData();
+            SetAppBarTitle.Invoke("Statistics");
+            LoadTop5CoffeeData();
+			LoadTop5AddOnData();
 
         }
 
@@ -44,9 +46,16 @@ namespace BisleriumCafe.Pages
 			return TransactionRepository.GetAll();
 		}
 
-		private void LoadTop5CoffeeData()
+        private ICollection<Product> GetProducts()
+        {
+            return ProductRepository.GetAll();
+        }
+
+        private void LoadTop5CoffeeData()
 		{
             DateTime currentDate = DateTime.Now;
+
+            var products = GetProducts();
 
             var coffeeTransactions = GetTransactions()
                 .Where(x => x.ProductType.ToString().Equals("Coffee", StringComparison.OrdinalIgnoreCase) &&
@@ -57,8 +66,10 @@ namespace BisleriumCafe.Pages
 				.GroupBy(x => x.ProductName, StringComparer.OrdinalIgnoreCase)
 				.Select(group => new TopCoffeeData
 				{
-					ProductName = group.Key,
-					TotalQuantity = group.Sum(x => x.Quantity),
+                    ProductID = products.FirstOrDefault(p => p.Name.Equals(group.Key, StringComparison.OrdinalIgnoreCase))?.Id ?? Guid.Empty,
+                    ProductName = group.Key,
+                    ProductDescription = products.FirstOrDefault(p => p.Name.Equals(group.Key, StringComparison.OrdinalIgnoreCase))?.Description,
+                    TotalQuantity = group.Sum(x => x.Quantity),
 					TotalRevenue = group.Sum(x => CalculateRevenue(x))
                 })
 				.OrderByDescending(x => x.TotalQuantity)
@@ -66,22 +77,31 @@ namespace BisleriumCafe.Pages
 				.ToList();
 
 			Top5CoffeeData = topCoffeeData;
-		}
 
-        private void LoadTop5AddinData()
+            foreach (TopCoffeeData s in Top5CoffeeData)
+            {
+                CoffeeDescTracks.Add(s.ProductID, false);
+            }
+        }
+
+        private void LoadTop5AddOnData()
         {
             DateTime currentDate = DateTime.Now;
 
-            var addinTransactions = GetTransactions()
+            var products = GetProducts();
+
+            var AddOnTransactions = GetTransactions()
                 .Where(x => x.ProductType.ToString().Equals("AddOn", StringComparison.OrdinalIgnoreCase) &&
                     x.PurchaseDate.Year == currentDate.Year &&
                     x.PurchaseDate.Month == monthNumber);
 
-            var topAddInData = addinTransactions
+            var topAddOnData = AddOnTransactions
                 .GroupBy(x => x.ProductName, StringComparer.OrdinalIgnoreCase)
-                .Select(group => new TopAddInData
+                .Select(group => new TopAddOnData
                 {
+                    ProductID = products.FirstOrDefault(p => p.Name.Equals(group.Key, StringComparison.OrdinalIgnoreCase))?.Id ?? Guid.Empty,
                     ProductName = group.Key,
+                    ProductDescription = products.FirstOrDefault(p => p.Name.Equals(group.Key, StringComparison.OrdinalIgnoreCase))?.Description,
                     TotalQuantity = group.Sum(x => x.Quantity),
                     TotalRevenue = group.Sum(x => CalculateRevenue(x))
                 })
@@ -89,7 +109,7 @@ namespace BisleriumCafe.Pages
                 .Take(5)
                 .ToList();
 
-            Top5AddInData = topAddInData;
+            Top5AddOnData = topAddOnData;
         }
 
         private decimal CalculateDiscount(string discount)
@@ -136,29 +156,65 @@ namespace BisleriumCafe.Pages
 
             Snackbar.Add(@DateTimeFormatInfo.CurrentInfo.GetMonthName(monthNumber).ToString(), Severity.Info);
             LoadTop5CoffeeData();
-            LoadTop5AddinData();
+            LoadTop5AddOnData();
 
+        }
+
+        private bool CoffeeFilterFunc(TopCoffeeData element)
+        {
+            string searchStringLower = SearchString?.ToLower() ?? string.Empty;
+
+            return string.IsNullOrWhiteSpace(SearchString)
+                   || element.ProductID.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+                   || element.ProductName.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+                   || element.TotalQuantity.ToString().Contains(searchStringLower, StringComparison.OrdinalIgnoreCase)
+                   || element.TotalRevenue.ToString().Contains(searchStringLower, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool AddOnFilterFunc(TopAddOnData element)
+        {
+            string searchStringLower = SearchString?.ToLower() ?? string.Empty;
+
+            return string.IsNullOrWhiteSpace(SearchString)
+                   || element.ProductID.ToString().Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+                   || element.ProductName.Contains(SearchString, StringComparison.OrdinalIgnoreCase)
+                   || element.TotalQuantity.ToString().Contains(searchStringLower, StringComparison.OrdinalIgnoreCase)
+                   || element.TotalRevenue.ToString().Contains(searchStringLower, StringComparison.OrdinalIgnoreCase);
         }
 
 
         private class TopCoffeeData
 		{
-			public string ProductName { get; set; }
-			public int TotalQuantity { get; set; }
+            public Guid ProductID { get; set; }
+            public string ProductName { get; set; }
+            public string ProductDescription { get; set; }
+            public int TotalQuantity { get; set; }
 			public decimal TotalRevenue { get; set; }
 		}
 
-        private class TopAddInData
+        private class TopAddOnData
         {
+            public Guid ProductID { get; set; }
             public string ProductName { get; set; }
+            public string ProductDescription { get; set; } 
             public int TotalQuantity { get; set; }
             public decimal TotalRevenue { get; set; }
+        }
+
+        private void ShowBtnPress(Guid id)
+        {
+            CoffeeDescTracks[id] = !CoffeeDescTracks[id];
+        }
+
+        private bool GetShow(Guid id)
+        {
+            return CoffeeDescTracks.ContainsKey(id) ? CoffeeDescTracks[id] : (CoffeeDescTracks[id] = false);
         }
 
         private void GeneratePdfWithCustomData()
         {
             var topCoffeeData = Top5CoffeeData.ToList(); // Assuming Top5CoffeeData is your data collection
-            var topAddInData = Top5AddInData.ToList(); // Assuming Top5CoffeeData is your data collection
+            var topAddOnData = Top5AddOnData.ToList(); // Assuming Top5CoffeeData is your data collection
 
             var directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var fileName = @"top5coffee.pdf";
@@ -207,7 +263,7 @@ namespace BisleriumCafe.Pages
 
             .GeneratePdf(fullPath);
 
-           fileName = @"top5addins.pdf";
+           fileName = @"top5AddOns.pdf";
            fullPath = Path.Combine(directoryPath, fileName);
 
             Document.Create(container =>
@@ -220,7 +276,7 @@ namespace BisleriumCafe.Pages
                     page.DefaultTextStyle(x => x.FontSize(20));
 
                     page.Header()
-                        .Text("Top 5 AddIn Sales")
+                        .Text("Top 5 AddOn Sales")
                         .SemiBold().FontSize(36).FontColor(QuestPDF.Helpers.Colors.Blue.Medium);
 
                     page.Content()
@@ -229,9 +285,9 @@ namespace BisleriumCafe.Pages
                         {
                             x.Spacing(20);
 
-                            foreach (var addInData in topAddInData)
+                            foreach (var AddOnData in topAddOnData)
                             {
-                                x.Item().Text($"Product Name: {addInData.ProductName} \n Total Quantity: {addInData.TotalQuantity} \n Total Revenue: ${addInData.TotalRevenue}");
+                                x.Item().Text($"Product Name: {AddOnData.ProductName} \n Total Quantity: {AddOnData.TotalQuantity} \n Total Revenue: ${AddOnData.TotalRevenue}");
                                 //x.Item(item =>
                                 //{
                                 //    item.Text($"Product Name: {coffeeData.ProductName}");

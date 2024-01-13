@@ -10,68 +10,138 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService;
 
-<MudSelect @bind-Value="monthNumber" Label="Select Month">
 
-    <MudSelectItem Value="1">January</MudSelectItem>
-    <MudSelectItem Value="2">February</MudSelectItem>
-    <MudSelectItem Value="3">March</MudSelectItem>
-    <MudSelectItem Value="4">April</MudSelectItem>
-    <MudSelectItem Value="5">May</MudSelectItem>
-    <MudSelectItem Value="6">June</MudSelectItem>
-    <MudSelectItem Value="7">July</MudSelectItem>
-    <MudSelectItem Value="8">August</MudSelectItem>
-    <MudSelectItem Value="9">September</MudSelectItem>
-    <MudSelectItem Value="10">October</MudSelectItem>
-    <MudSelectItem Value="11">November</MudSelectItem>
-    <MudSelectItem Value="12">December</MudSelectItem>
+<MudContainer Fluid="true">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h3" Class="section-header">Top 5 Coffee Transactions</MudText>
+            <MudTable Elevation="0"
+                      Items="@Top5CoffeeData"
+                      FixedHeader="true"
+                      Filter="new Func<TopCoffeeData,bool>(CoffeeFilterFunc)"
+                      Hover="true"
+                      ReadOnly="true">
+                <ToolBarContent>
+                    <MudSelect @bind-Value="monthNumber" Label="Select Month">
 
-</MudSelect>
-<MudButton Color="Color.Primary" OnClick="SearchMonth">Search</MudButton>
-<MudButton Color="Color.Primary" OnClick="GeneratePdfWithCustomData">Download</MudButton>
+                        <MudSelectItem Value="1">January</MudSelectItem>
+                        <MudSelectItem Value="2">February</MudSelectItem>
+                        <MudSelectItem Value="3">March</MudSelectItem>
+                        <MudSelectItem Value="4">April</MudSelectItem>
+                        <MudSelectItem Value="5">May</MudSelectItem>
+                        <MudSelectItem Value="6">June</MudSelectItem>
+                        <MudSelectItem Value="7">July</MudSelectItem>
+                        <MudSelectItem Value="8">August</MudSelectItem>
+                        <MudSelectItem Value="9">September</MudSelectItem>
+                        <MudSelectItem Value="10">October</MudSelectItem>
+                        <MudSelectItem Value="11">November</MudSelectItem>
+                        <MudSelectItem Value="12">December</MudSelectItem>
 
-<div>Top Products</div>
-<MudTable Elevation="0"
-          Items="@Top5CoffeeData"
-          FixedHeader="true"
-          Hover="true"
-          ReadOnly="true">
+                    </MudSelect>
+                    <MudButton Color="Color.Primary" OnClick="SearchMonth">Search</MudButton>
+                    <MudButton Color="Color.Primary" OnClick="GeneratePdfWithCustomData">Download</MudButton>
+                    <MudStack Row="true">
+                        @*<ImportButton T="Spare" ChangeParentState="StateHasChanged" />
+                            <ExportButton T="Spare" />*@
+                    </MudStack>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Clearable="true"></MudTextField>
+                </ToolBarContent>
+                <ColGroup>
+                    <col width="200" />
+                    <col width="400" />
+                    <col width="300" />
+                    <col />
+                    <col />
+                </ColGroup>
+                <HeaderContent>
+                    <!-- ... (existing headers) ... -->
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x=>x.ProductID)">ID</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x => x.ProductName)">Product Name</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;">Description</MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x=>x.TotalQuantity)">Total Quantity</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopCoffeeData, object>(x=>x.TotalRevenue)">Total Revenue</MudTableSortLabel></MudTh>
 
-    <HeaderContent>
-        <!-- ... (existing headers) ... -->
-        <MudTh><MudLabel>Product Name</MudLabel></MudTh>
-        <MudTh><MudLabel>Total Quantity</MudLabel></MudTh>
-        <MudTh><MudLabel>Total Revenue</MudLabel></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <!-- ... (existing row template) ... -->
-        <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-        <MudTd DataLabel="Total Quantity">@context.TotalQuantity</MudTd>
-        <MudTd DataLabel="Total Revenue">NPR @context.TotalRevenue</MudTd>
-    </RowTemplate>
-</MudTable>
+                </HeaderContent>
+                <RowTemplate>
+                    <!-- ... (existing row template) ... -->
+                    <MudTd DataLabel="ID">
+                        <MudChip>@context.ProductID</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                    <MudTd Style="white-space: nowrap;">
+                        <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(@context.ProductID))">
+                            @((GetShow(@context.ProductID)) ? "Hide" : "Show") Description
+                        </MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Total Quantity">@context.TotalQuantity</MudTd>
+                    <MudTd DataLabel="Total Revenue">NPR @context.TotalRevenue</MudTd>
+                </RowTemplate>
+                <ChildRowContent>
+                    @if (GetShow(@context.ProductID))
+                    {
+                        <td colspan="6">
+                            <MudContainer MaxWidth="MaxWidth.Medium">
+                                <MudText Style="padding: 40px">@context.ProductDescription</MudText>
+                            </MudContainer>
+                        </td>
+                    }
+                </ChildRowContent>
+            </MudTable>
+        </MudItem>
 
+        <MudItem xs="12" Class="mt-4">
+            <MudText Typo="Typo.h3" Class="section-header">Top 5 Add-Ons Transactions</MudText>
+            <MudTable Elevation="0"
+                      Items="@Top5AddOnData"
+                      FixedHeader="true"
+                      Filter="new Func<TopAddOnData,bool>(AddOnFilterFunc)"
+                      Hover="true"
+                      ReadOnly="true">
+                <ColGroup>
+                    <col width="200" />
+                    <col width="400" />
+                    <col width="300" />
+                    <col />
+                    <col />
+                </ColGroup>
+                <HeaderContent>
+                    <!-- ... (existing headers) ... -->
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopAddOnData, object>(x=>x.ProductID)">ID</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopAddOnData, object>(x => x.ProductName)">Product Name</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;">Description</MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopAddOnData, object>(x=>x.TotalQuantity)">Total Quantity</MudTableSortLabel></MudTh>
+                    <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<TopAddOnData, object>(x=>x.TotalRevenue)">Total Revenue</MudTableSortLabel></MudTh>
 
-<div style="margin-top:10px;">Top AddIns</div>
-<MudTable Elevation="0"
-          Items="@Top5AddInData"
-          FixedHeader="true"
-          Hover="true"
-          ReadOnly="true">
-
-    <HeaderContent>
-        <!-- ... (existing headers) ... -->
-        <MudTh><MudLabel>Product Name</MudLabel></MudTh>
-        <MudTh><MudLabel>Total Quantity</MudLabel></MudTh>
-        <MudTh><MudLabel>Total Revenue</MudLabel></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <!-- ... (existing row template) ... -->
-        <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-        <MudTd DataLabel="Total Quantity">@context.TotalQuantity</MudTd>
-        <MudTd DataLabel="Total Revenue">NPR @context.TotalRevenue</MudTd>
-    </RowTemplate>
-</MudTable>
-
+                </HeaderContent>
+                <RowTemplate>
+                    <!-- ... (existing row template) ... -->
+                    <MudTd DataLabel="ID">
+                        <MudChip>@context.ProductID</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                    <MudTd Style="white-space: nowrap;">
+                        <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(@context.ProductID))">
+                            @((GetShow(@context.ProductID)) ? "Hide" : "Show") Description
+                        </MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Total Quantity">@context.TotalQuantity</MudTd>
+                    <MudTd DataLabel="Total Revenue">NPR @context.TotalRevenue</MudTd>
+                </RowTemplate>
+                <ChildRowContent>
+                    @if (GetShow(@context.ProductID))
+                    {
+                        <td colspan="6">
+                            <MudContainer MaxWidth="MaxWidth.Medium">
+                                <MudText Style="padding: 40px">@context.ProductDescription</MudText>
+                            </MudContainer>
+                        </td>
+                    }
+                </ChildRowContent>
+            </MudTable>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 
 

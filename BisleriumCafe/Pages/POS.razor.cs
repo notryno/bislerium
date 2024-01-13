@@ -12,11 +12,13 @@ namespace BisleriumCafe.Pages
         private Member FoundMember;
         private bool isRegular;
         private bool MemberFound=false;
+        private Action<string> SetAppBarTitle { get; set; }
 
         protected override void OnInitialized()
         {
             // Fetch products from the repository
             Products = (List<Product>)ProductRepository.GetAll();
+            SetAppBarTitle.Invoke("Point of Sale");
         }
 
         private void AddToCart(Product product)

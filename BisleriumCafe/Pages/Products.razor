@@ -58,9 +58,9 @@
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Product, object>(x=>x.Description)">Description</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Product, object>(x=>x.ProductType)">Product Type</MudTableSortLabel></MudTh> @*Ryan*@
         <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Product, object>(x=>x.Price)">Price</MudTableSortLabel></MudTh>
-        <MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Product, object>(x=>x.AvailableQuantity)">Available Quantity</MudTableSortLabel></MudTh>
+        @*<MudTh Style="white-space: nowrap;"><MudTableSortLabel SortBy="new Func<Product, object>(x=>x.AvailableQuantity)">Available Quantity</MudTableSortLabel></MudTh>
         <MudTh Style="white-space: nowrap;">Last Taken Out</MudTh>
-        <MudTh Style="white-space: nowrap;">Action</MudTh>
+        <MudTh Style="white-space: nowrap;">Action</MudTh>*@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="ID">
@@ -74,7 +74,7 @@
         </MudTd>
         <MudTd Style="white-space: nowrap;" DataLabel="ProductType">@context.ProductType</MudTd> @*Ryan*@
         <MudTd Style="white-space: nowrap;" DataLabel="Price">Rs. @context.Price</MudTd>
-        <MudTd DataLabel="Available Quantity">
+        @*<MudTd DataLabel="Available Quantity">
             @if (@context.AvailableQuantity == 0)
             {
                 <MudText Color="Color.Secondary">Stockout</MudText>
@@ -97,7 +97,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Secondary" OnClick="() => ActOnStock(context, StockAction.Deduct)" />
                 </MudTooltip>
             </MudStack>
-        </MudTd>
+        </MudTd>*@
     </RowTemplate>
     <ChildRowContent>
         @if (GetShow(@context.Id))
@@ -132,9 +132,9 @@
         <MudTd DataLabel="Price">
             <MudTextField @bind-Value="@context.Price" Required />
         </MudTd>
-        <MudTd DataLabel="Available Quantity">
+        @*<MudTd DataLabel="Available Quantity">
             <MudTextField @bind-Value="@context.AvailableQuantity" Required />
-        </MudTd>
+        </MudTd>*@
     </RowEditingTemplate>
 
 

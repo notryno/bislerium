@@ -30,7 +30,7 @@
             </MudSelect>
 
             <MudTextField T="Decimal" @bind-Value="@Price" Label="Price" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="NPR" Validation="@(new RangeAttribute(1, 10000000) { ErrorMessage = "Price must be between 1 and 10000000"})" />
-            <MudNumericField @bind-Value="@AvailableQuantity" Required="true" Label="Quantity" Variant="Variant.Text" Min="0" Max="100000" Validation="@(new RangeAttribute(1, 100000) { ErrorMessage = "Quantity must be between 1 and 100000"})" />
+            @*<MudNumericField @bind-Value="@AvailableQuantity" Required="true" Label="Quantity" Variant="Variant.Text" Min="0" Max="100000" Validation="@(new RangeAttribute(1, 100000) { ErrorMessage = "Quantity must be between 1 and 100000"})" />*@
         </MudForm>
     </DialogContent>
     <DialogActions>

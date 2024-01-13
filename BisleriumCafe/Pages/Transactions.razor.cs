@@ -27,7 +27,7 @@ public partial class Transactions
     {
         try
         {
-            SetAppBarTitle.Invoke("Manage Transactions");
+            SetAppBarTitle.Invoke("Transactions");
             Elements = TransactionRepository.GetAll();
 
             foreach (Transaction s in Elements)

@@ -12,9 +12,7 @@ public class Product : IModel, ICloneable
 
     public decimal Price { get; set; }
 
-    public int AvailableQuantity { get; set; }
-
-    private string ImageUrl { get; set; }
+    //public int AvailableQuantity { get; set; }
 
     public object Clone()
     {
@@ -25,8 +23,7 @@ public class Product : IModel, ICloneable
             Description = Description,
             ProductType = ProductType,
             Price = Price,
-            AvailableQuantity = AvailableQuantity,
-            ImageUrl = ImageUrl,
+            //AvailableQuantity = AvailableQuantity,
         };
     }
 

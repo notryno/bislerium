@@ -24,6 +24,7 @@ public partial class Users
     protected override void OnInitialized()
     {
         SetAppBarTitle.Invoke("Manage Users");
+        UserRepository.Clear();
         Elements = UserRepository.GetAll();
     }
 

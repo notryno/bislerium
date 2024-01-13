@@ -11,7 +11,7 @@ public partial class AddProductDialog
     private string Description;
     private ProductType ProductType;
     private decimal Price;
-    private int AvailableQuantity;
+    //private int AvailableQuantity;
 
     private void Cancel()
     {
@@ -29,7 +29,7 @@ public partial class AddProductDialog
                 Description = Description,
                 ProductType = ProductType,
                 Price = Price,
-                AvailableQuantity = AvailableQuantity
+                //AvailableQuantity = AvailableQuantity
             };
             ProductRepository.Add(product);
             ChangeParentState.Invoke();

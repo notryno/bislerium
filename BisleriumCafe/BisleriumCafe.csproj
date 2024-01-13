@@ -94,6 +94,7 @@
       <Folder Include="Data\Utils\" />
       <Folder Include="Shared\Buttons\" />
       <Folder Include="Shared\Dialogs\" />
+      <Folder Include="wwwroot\Video\" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="Pages\RoleRoute.razor.cs" />
@@ -108,5 +109,8 @@
       <RazorComponent Remove="Shared\Dialogs\AddProductDialog.razor" />
       <RazorComponent Remove="Shared\Chips\ProductChip.razor" />
       <RazorComponent Remove="Shared\Dialogs\AddProductDialog.razor" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Remove="wwwroot\Video\" />
     </ItemGroup>
 </Project>
