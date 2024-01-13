@@ -46,10 +46,12 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+        <!--<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />-->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#704332" />
+
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#704332" BaseSize="128,128" />
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
@@ -60,6 +62,16 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+        <MauiImage Update="Resources\Images\logo.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
+        <MauiImage Include="wwwroot\Image\logo.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </MauiImage>
+        <MauiImage Include="wwwroot\Image\logobG.png">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </MauiImage>
     </ItemGroup>
 
     <ItemGroup>
@@ -69,7 +81,7 @@
         <PackageReference Include="ExcelMapper" Version="5.2.564" />
         <PackageReference Include="Bogus" Version="35.3.0" />
         <PackageReference Include="PSC.Blazor.Components.Chartjs" Version="6.0.43" />
-        <PackageReference Include="QuestPDF" Version="2023.12.2" />
+        <PackageReference Include="QuestPDF" Version="2023.12.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -112,5 +124,18 @@
     </ItemGroup>
     <ItemGroup>
       <Content Remove="wwwroot\Video\" />
+      <Content Remove="wwwroot\Image\logo.png" />
+      <Content Remove="wwwroot\Image\logo.png" />
+      <Content Remove="wwwroot\Image\logobG.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Pages\Statistics.razor.cs">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Update="wwwroot\Image\logo.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 </Project>

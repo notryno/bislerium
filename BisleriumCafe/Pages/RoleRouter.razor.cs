@@ -9,18 +9,18 @@ public partial class RoleRouter
         if (AuthService.CurrentUser.HasInitialPassword)
         {
             Snackbar.Add("Please change your password!", Severity.Warning);
-            NavigationManager.NavigateTo("/change-password");
+            //NavigationManager.NavigateTo("/change-password");
         }
-        else
-        {
+        //else
+        //{
             if (AuthService.IsUserAdmin())
             {
                 NavigationManager.NavigateTo(Dashboard.Route);
             }
             else
             {
-                NavigationManager.NavigateTo(Inventory.Route);
+                NavigationManager.NavigateTo(POS.Route);
             }
-        }
+        //}
     }
 }

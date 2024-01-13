@@ -12,6 +12,8 @@ namespace BisleriumCafe.Pages
         private Member FoundMember;
         private bool isRegular;
         private bool MemberFound=false;
+
+        [CascadingParameter]
         private Action<string> SetAppBarTitle { get; set; }
 
         protected override void OnInitialized()

@@ -21,3 +21,7 @@ global using System.Security.Cryptography;
 global using System.Text.Json;
 global using System.Text.Json.Serialization.Metadata;
 global using System.Text.RegularExpressions;
+global using QuestPDF.Helpers;
+global using QuestPDF.Infrastructure;
+global using QuestPDF.Drawing;
+global using QuestPDF.Fluent;
